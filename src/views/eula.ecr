@@ -1,0 +1,37 @@
+<h1>End User Licence Agreement</h2>
+
+<p>
+  <em>If you don't understand Danish, don't accept this.</em>
+</p>
+
+<p>
+  Ved at bruge denne web-app accepterer du et par premisser:
+  <ol>
+    <li>
+      Jeg har teknisk set adgang til dine konto udtog og pille ved din
+      YNAB konto igennem deres API.
+    </li>
+  </ol>
+</p>
+<p>
+  Så må du gøre op med dig selv om det er acceptabelt. Reelt set har
+  jeg ikke den store grund til at snage i de transaktionsdata som
+  app'en henter fra din bank (medmindre der er et problem du beder mig
+  om at gave i). Og kommunikationen med banken er read-only, så selv
+  hvis app'en skulle blive kompromiteret, så er der ikke nogen der kan
+  tømme dine konti.
+</p>
+<p>
+  Det er potentielt værre med YNAB. Deres API giver mulighed for at
+  opdatere transaktioner, så hvis man virkelig vil være en røv, så kan
+  man godt ødelægge et budget. Men der må man lige anslå risikoen for
+  at denne app bliver kompromiteret til at uddele ens API key, og at
+  det falder i hænderne på en der har lyst til at være omtalte røv.
+</p>
+
+<form method=post action="/auth/eula">
+  <div>
+    <input type="checkbox" name="accepted" value="1"/><label for="accepted">Den er fjong med mig</label>
+  </div>
+  <input type="submit" value="Gem" />
+</form>

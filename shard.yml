@@ -1,0 +1,33 @@
+name: n2y
+version: 0.1.0
+
+authors:
+  - Thomas Fini Hansen <xen@xen.dk>
+
+targets:
+  server:
+    main: src/server.cr
+  micrate:
+    main: src/micrate.cr
+crystal: 1.7.3
+
+license: MIT
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+  kemal-session:
+    github: kemalcr/kemal-session
+  spec-kemal:
+    github: kemalcr/spec-kemal
+    branch: master
+  multi_auth:
+    github: msa7/multi_auth
+  raven:
+    github: Sija/raven.cr
+  dotenv:
+    github: drum445/dotenv
+  micrate:
+    github: amberframework/micrate
+  sqlite3:
+    github: crystal-lang/crystal-sqlite3

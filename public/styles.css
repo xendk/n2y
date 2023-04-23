@@ -1,0 +1,11 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+input[type="submit"] {
+  font-family: 'Open Sans', sans-serif;
+  border: 2px solid #000;
+  background-color: #fff;
+  padding: 4px 8px;
+  font-size: 1em;
+}
