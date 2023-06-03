@@ -9,6 +9,8 @@ targets:
     main: src/server.cr
   micrate:
     main: src/micrate.cr
+  nordigen_test:
+    main: src/nordigen_test.cr
 crystal: 1.7.3
 
 license: MIT
@@ -31,3 +33,8 @@ dependencies:
     github: amberframework/micrate
   sqlite3:
     github: crystal-lang/crystal-sqlite3
+
+development_dependencies:
+  webmock:
+    github: manastech/webmock.cr
+    branch: master
