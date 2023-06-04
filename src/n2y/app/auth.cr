@@ -3,10 +3,19 @@ module N2y::App::Auth
   # Kemal middleware for authentication.
   #
   # Redirects to login page if user is not authenticated, and new
-  # users to EULA.
+  # users to terms of service.
   class Handler < Kemal::Handler
-    exclude ["/favicon.ico", "/auth", "/auth/callback", "/auth/eula", "/auth/logout", "/auth/error", "/kaboom"]
-    exclude ["/auth/eula"], "POST"
+    exclude [
+      "/favicon.ico",
+      "/privacy-policy",
+      "/auth",
+      "/auth/callback",
+      "/auth/tos",
+      "/auth/logout",
+      "/auth/error",
+      "/kaboom"
+    ]
+    exclude ["/auth/tos"], "POST"
 
     def call(context)
       context.session.string?("user_id")
@@ -16,9 +25,9 @@ module N2y::App::Auth
         if N2y::Db::INSTANCE.user?(context.session.string?("user_id"))
           call_next(context)
         else
-          # New users have to accept the EULA. We don't add them to
-          # the user list until they do.
-          context.redirect "/auth/eula"
+          # New users have to accept the terms of service. We don't
+          # add them to the user list until they do.
+          context.redirect "/auth/tos"
         end
       else
         context.redirect "/auth"
@@ -52,21 +61,21 @@ module N2y::App::Auth
     end
   end
 
-  # Show EULA.
-  get "/auth/eula" do |env|
-    title = "End User License Agreement"
-    N2y::App.render_page "eula"
+  # Show terms of service.
+  get "/auth/tos" do |env|
+    title = "Terms of Service"
+    N2y::App.render_page "tos"
   end
 
-  # Accept EULA.
-  post "/auth/eula" do |env|
+  # Accept terms of service.
+  post "/auth/tos" do |env|
     accepted = env.params.body["accepted"]? && env.params.body["accepted"]?.as(String) == "1"
 
     if accepted
       N2y::Db::INSTANCE.add_user(env.session.string?("user_id"))
       env.redirect "/"
     else
-      env.redirect "/auth/eula"
+      env.redirect "/auth/tos"
     end
   end
 

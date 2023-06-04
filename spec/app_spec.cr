@@ -22,32 +22,32 @@ describe N2y::App do
     response.body.should contain "N2Y"
   end
 
-  it "presents new users with the EULA" do
+  it "presents new users with the Terms of Service page" do
     get "/", authenticate("test@gmail.com")
 
     response.status_code.should eq 302
-    response.headers["Location"].should eq "/auth/eula"
+    response.headers["Location"].should eq "/auth/tos"
   end
 
-  it "allows for creating a new user by accepting the EULA" do
+  it "allows for creating a new user by accepting the terms of service" do
     session = authenticate("test@gmail.com")
     get "/", session
 
     session["Content-Type"] = "application/x-www-form-urlencoded"
-    post "/auth/eula", session, HTTP::Params.encode({"accepted": "1"})
+    post "/auth/tos", session, HTTP::Params.encode({"accepted": "1"})
 
     N2y::Db::INSTANCE.user?("test@gmail.com").should eq "test@gmail.com"
   end
 
-  it "not accepting reloads the EULA" do
+  it "not accepting reloads the terms of service" do
     session = authenticate("test2@gmail.com")
     get "/", session
 
     session["Content-Type"] = "application/x-www-form-urlencoded"
-    post "/auth/eula", session, HTTP::Params.encode({} of String => String)
+    post "/auth/tos", session, HTTP::Params.encode({} of String => String)
 
     response.status_code.should eq 302
-    response.headers["Location"].should eq "/auth/eula"
+    response.headers["Location"].should eq "/auth/tos"
     N2y::Db::INSTANCE.user?("test2@gmail.com").should eq nil
   end
 end

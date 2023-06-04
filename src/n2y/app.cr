@@ -40,6 +40,11 @@ module N2y
       render_page "index"
     end
 
+    get "/privacy-policy" do |env|
+      title = "Privacy Policy"
+      N2y::App.render_page "privacy-policy"
+    end
+
     # Throw an error for testing purposes.
     get "/kaboom" do |env|
       raise "Oh noooes! (Relax, this is just a test)"
