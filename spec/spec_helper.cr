@@ -5,6 +5,7 @@ require "../src/n2y/database"
 DB_FIXURE = "/tmp/n2y-spec.db"
 DB_URL = "sqlite3://#{DB_FIXURE}"
 ENV["N2Y_DB_URL"] = DB_URL
+ENV["SESSION_SECRET"] = "super secret"
 
 # Set up a database fixture.
 def load_fixture(name)

@@ -12,8 +12,9 @@ require "./app/*"
 
 module N2y
   Kemal::Session.config do |config|
-    config.cookie_name = "session_id"
+    config.cookie_name = "n2y_session_id"
     config.secret = "super-secret"
+    config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
     config.gc_interval = 2.minutes # 2 minutes
   end
 
