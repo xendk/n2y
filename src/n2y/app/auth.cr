@@ -22,7 +22,7 @@ module N2y::App::Auth
       return call_next(context) if exclude_match?(context)
 
       if context.session.string?("user_id")
-        if N2y::Db::INSTANCE.user?(context.session.string?("user_id"))
+        if N2y::User.get(context.session.string("user_id")).exists?
           call_next(context)
         else
           # New users have to accept the terms of service. We don't
@@ -71,8 +71,8 @@ module N2y::App::Auth
   post "/auth/tos" do |env|
     accepted = env.params.body["accepted"]? && env.params.body["accepted"]?.as(String) == "1"
 
-    if accepted
-      N2y::Db::INSTANCE.add_user(env.session.string?("user_id"))
+    if accepted && env.session.string?("user_id")
+      N2y::User.new(env.session.string("user_id")).save
       env.redirect "/"
     else
       env.redirect "/auth/tos"

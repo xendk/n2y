@@ -32,17 +32,17 @@ describe N2y::App do
   end
 
   it "allows for creating a new user by accepting the terms of service" do
-    session = authenticate("test@gmail.com")
+    session = authenticate("test2@gmail.com")
     get "/", session
 
     session["Content-Type"] = "application/x-www-form-urlencoded"
     post "/auth/tos", session, HTTP::Params.encode({"accepted": "1"})
 
-    N2y::Db::INSTANCE.user?("test@gmail.com").should eq "test@gmail.com"
+    N2y::User.get("test2@gmail.com").exists?.should eq true
   end
 
   it "not accepting reloads the terms of service" do
-    session = authenticate("test2@gmail.com")
+    session = authenticate("test3@gmail.com")
     get "/", session
 
     session["Content-Type"] = "application/x-www-form-urlencoded"
@@ -50,6 +50,6 @@ describe N2y::App do
 
     response.status_code.should eq 302
     response.headers["Location"].should eq "/auth/tos"
-    N2y::Db::INSTANCE.user?("test2@gmail.com").should eq nil
+    N2y::User.get("test3@gmail.com").exists?.should eq false
   end
 end
