@@ -3,6 +3,11 @@ require "../src/n2y/nordigen"
 require "webmock"
 require "http/headers"
 
+N2y::Nordigen.configure do |settings|
+  settings.secret_id = "secret_id"
+  settings.secret = "secret"
+end
+
 class DummyResponse < N2y::Nordigen::Response
   getter dummy : String
 end
@@ -30,7 +35,7 @@ describe "N2y::Nordigen" do
       end
     end
 
-    nordigen = N2y::Nordigen.new("secret_id", "secret")
+    nordigen = N2y::Nordigen.new()
 
     nordigen.get("random_endpoint", class: DummyResponse).dummy.should eq("data")
 
@@ -53,7 +58,7 @@ describe "N2y::Nordigen" do
       end
     end
 
-    nordigen = N2y::Nordigen.new("secret_id", "secret_key")
+    nordigen = N2y::Nordigen.new()
 
     nordigen.refresh_token = "the_refresh_token"
 
@@ -70,7 +75,7 @@ describe "N2y::Nordigen" do
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
-    nordigen = N2y::Nordigen.new("secret_id", "secret_key")
+    nordigen = N2y::Nordigen.new()
 
     expect_raises(Exception, message: "Invalid secret_id/secret") do
       nordigen.get("random_endpoint", class: DummyResponse)
@@ -85,7 +90,7 @@ describe "N2y::Nordigen" do
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
-    nordigen = N2y::Nordigen.new("secret_id", "secret_key")
+    nordigen = N2y::Nordigen.new()
 
     nordigen.refresh_token = "the_refresh_token"
 
@@ -95,7 +100,7 @@ describe "N2y::Nordigen" do
   end
 
   it "#get returns requested class" do
-    nordigen = N2y::Nordigen.new("secret_id", "secret_key")
+    nordigen = N2y::Nordigen.new()
     nordigen.access_token = "access_token"
 
     WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/").
@@ -106,7 +111,7 @@ describe "N2y::Nordigen" do
   end
 
   it "returns a list of banks" do
-    nordigen = N2y::Nordigen.new("secret_id", "secret_key")
+    nordigen = N2y::Nordigen.new()
     nordigen.access_token = "access_token"
 
     WebMock.stub(:get, "https://ob.nordigen.com/api/v2/institutions/?country=DK")

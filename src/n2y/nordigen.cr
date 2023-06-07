@@ -3,10 +3,16 @@ require "uri"
 require "json"
 require "http/client"
 require "http/headers"
+require "habitat"
 require "./nordigen/*"
 
 module N2y
   class Nordigen
+    Habitat.create do
+      setting secret_id : String
+      setting secret : String
+    end
+
     property access_token : String | Nil
     property refresh_token : String | Nil
 
@@ -15,7 +21,7 @@ module N2y
       "/api/v2/token/new/" => InvalidCreds,
     }
 
-    def initialize(@secret_id : String, @secret : String)
+    def initialize()
       @base_uri = URI.parse("https://ob.nordigen.com/api/v2/")
       @headers = HTTP::Headers {
         "Accept" => "application/json",
@@ -69,8 +75,8 @@ module N2y
         response = do_request("POST", URI.parse("token/refresh"), data: data, class: RefreshTokenResponse)
       else
         data = {
-          "secret_id" => @secret_id,
-          "secret_key" => @secret,
+          "secret_id" => settings.secret_id,
+          "secret_key" => settings.secret,
         }.to_json
 
         response = do_request("POST", URI.parse("token/new"), data: data, class: TokenResponse)
