@@ -5,6 +5,8 @@ require "../src/n2y/app"
 # /auth/callback.
 require "./mock-multi_auth"
 
+# Use the same fixture for all the tests. They should be safe to run
+# on the same database.
 load_fixture("just-one-user")
 
 describe N2y::App do
