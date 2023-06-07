@@ -33,6 +33,8 @@ dependencies:
     github: amberframework/micrate
   sqlite3:
     github: crystal-lang/crystal-sqlite3
+  habitat:
+    github: luckyframework/habitat
 
 development_dependencies:
   webmock:
