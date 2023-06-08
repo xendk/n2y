@@ -17,6 +17,7 @@ module N2y
     config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
     config.gc_interval = 2.minutes # 2 minutes
   end
+add_context_storage_type(N2y::User)
 
   module App
     # Adds UTF-8 charset to HTML responses.
@@ -38,6 +39,7 @@ module N2y
 
     get "/" do |env|
       title = "Home"
+      user = (env.get "user").as(N2y::User)
       render_page "index"
     end
 

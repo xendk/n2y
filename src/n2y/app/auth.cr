@@ -22,7 +22,9 @@ module N2y::App::Auth
       return call_next(context) if exclude_match?(context)
 
       if context.session.string?("user_id")
-        if N2y::User.get(context.session.string("user_id")).exists?
+        user = N2y::User.get(context.session.string("user_id"))
+        if user.exists?
+          context.set "user", user
           call_next(context)
         else
           # New users have to accept the terms of service. We don't
@@ -78,6 +80,15 @@ module N2y::App::Auth
       env.redirect "/auth/tos"
     end
   end
+
+  get "/auth/nordigan" do |env|
+  end
+
+  # get "/auth/ynab" do |env|
+  #   redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"
+
+  #   env.redirect(N2y::YNAB.new.redirect_uri(redirect_uri).to_s)
+  # end
 
   # Error page displayed when we don't get a good callback from Google.
   get "/auth/error" do |env|
