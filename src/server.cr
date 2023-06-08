@@ -41,4 +41,16 @@ end
 # Capture exceptions to Sentry.
 Kemal.config.add_handler Raven::Kemal::ExceptionHandler.new
 
+FileUtils.mkdir_p ENV["SESSION_DIR"] if ENV["SESSION_DIR"]?
+
+Kemal::Session.config do |config|
+  config.cookie_name = "n2y_session_id"
+  config.secret = "super-secret"
+  config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
+  config.gc_interval = 2.minutes # 2 minutes
+  if ENV["SESSION_DIR"]?
+    config.engine = Kemal::Session::FileEngine.new({:sessions_dir => ENV["SESSION_DIR"]})
+  end
+end
+
 require "./n2y/app"

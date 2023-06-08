@@ -10,15 +10,9 @@ end
 
 require "./app/*"
 
-module N2y
-  Kemal::Session.config do |config|
-    config.cookie_name = "n2y_session_id"
-    config.secret = "super-secret"
-    config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
-    config.gc_interval = 2.minutes # 2 minutes
-  end
 add_context_storage_type(N2y::User)
 
+module N2y
   module App
     # Adds UTF-8 charset to HTML responses.
     class ContentTypeHandler < Kemal::Handler
