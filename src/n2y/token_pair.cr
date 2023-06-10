@@ -3,29 +3,30 @@ module N2y
     getter! access : String?
     getter! refresh : String?
 
+    @on_change : Nil | (TokenPair ->)
+
     def initialize(*, @access = nil, @refresh = nil)
+      @on_change = nil
+    end
+
+    def initialize(*, @access = nil, @refresh = nil, &@on_change : TokenPair ->)
+    end
+
+    protected def on_change
+      if callback = @on_change
+        callback.call(self)
+      end
     end
 
     def access=(@access : String?)
-      if callback = @access_change
-        callback.call(self)
-      end
-
+      on_change
     end
 
-    def on_access_change(&block : TokenPair ->)
-      @access_change = block
+    def on_change(&@on_change : TokenPair ->)
     end
 
     def refresh=(@refresh : String?)
-      if callback = @refresh_change
-        callback.call(self)
-      end
-
-    end
-
-    def on_refresh_change(&block : TokenPair ->)
-      @refresh_change = block
+      on_change
     end
 
     # Invalidate access token.

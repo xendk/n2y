@@ -60,42 +60,31 @@ describe TokenPair do
     pair.refresh.should be "bar"
   end
 
-  it "it can notify observers of changes to access token" do
-    pair = TokenPair.new(access: "foo", refresh: "bar")
-
-    val = nil
-
-    pair.on_access_change do |token|
-      val = token.access
-    rescue
-        val = nil
+  it "it can notify observers of changes to tokens" do
+    access_token = nil
+    refresh_token = nil
+    pair = TokenPair.new(access: "foo", refresh: "bar") do |token|
+      access_token = token.access?
+      refresh_token = token.refresh?
     end
 
-    val.should be_nil
     pair.access = "baz"
-    val.should be "baz"
+    access_token.should be "baz"
+    refresh_token.should be "bar"
 
     pair.invalidate_access
-    val.should be_nil
-  end
+    access_token.should be_nil
+    refresh_token.should be "bar"
 
-  it "it can notify observers of changes to refesh token" do
-    pair = TokenPair.new(access: "foo", refresh: "bar")
+    pair.access = "qux"
 
-    val = nil
-
-    pair.on_refresh_change do |token|
-      val = token.refresh
-    rescue
-        val = nil
-    end
-
-    val.should be_nil
-    pair.refresh = "baz"
-    val.should be "baz"
+    pair.refresh = "quux"
+    access_token.should be "qux"
+    refresh_token.should be "quux"
 
     pair.invalidate_refresh
-    val.should be_nil
+    access_token.should be_nil
+    refresh_token.should be_nil
   end
 
   it "can tell if it's usable" do
