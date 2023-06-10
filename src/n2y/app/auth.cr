@@ -37,7 +37,7 @@ module N2y::App::Auth
     end
   end
 
-  add_handler N2y::App::Auth::Handler.new
+  Kemal.config.add_handler N2y::App::Auth::Handler.new
 
   # Start authentication by redirecting to Google.
   get "/auth" do |env|
