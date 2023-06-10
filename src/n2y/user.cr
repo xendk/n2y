@@ -42,7 +42,7 @@ SQL
 
     def save
       if exists?
-        settings.db.query <<-SQL, nordigen_requisition_id, nordigen_bank_id, ynab_refresh_token, mail
+        settings.db.exec <<-SQL, nordigen_requisition_id, nordigen_bank_id, ynab_refresh_token, mail
 UPDATE users SET nordigen_requisition_id = ?, nordigen_bank_id = ?, ynab_refresh_token = ? WHERE mail = ?
 SQL
       else
