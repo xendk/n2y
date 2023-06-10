@@ -20,6 +20,11 @@ module N2y
       (@@users[mail] ||= User.new(mail)).tap &.load
     end
 
+    # Clear cache of users. Primarily for testing.
+    def self.clear_cache
+      @@users = {} of String => User
+    end
+
     def initialize(mail : String)
       @mail = mail
     end
