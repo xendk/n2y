@@ -5,6 +5,7 @@ require "http/client"
 require "http/headers"
 require "habitat"
 require "./nordigen/*"
+require "./token_pair"
 
 module N2y
   class Nordigen
@@ -13,15 +14,12 @@ module N2y
       setting secret : String
     end
 
-    property access_token : String | Nil
-    property refresh_token : String | Nil
-
     DENIED_MAPPING = {
       "/api/v2/token/refresh/" => InvalidRefreshToken,
       "/api/v2/token/new/" => InvalidCreds,
     }
 
-    def initialize()
+    def initialize(@token_pair : N2y::TokenPair = N2y::TokenPair.new)
       @base_uri = URI.parse("https://ob.nordigen.com/api/v2/")
       @headers = HTTP::Headers {
         "Accept" => "application/json",
@@ -53,10 +51,7 @@ module N2y
       begin
         do_request(method, path, data: data, class: klass)
       rescue ex : InvalidAccessToken | InvalidRefreshToken
-        @access_token = nil
-        if ex.is_a? InvalidRefreshToken
-          @refresh_token = nil
-        end
+        ex.is_a?(InvalidRefreshToken) ? @token_pair.invalidate : @token_pair.invalidate_access
         refresh_tokens
         do_request(method, path, data: data, class: klass)
       end
@@ -67,9 +62,9 @@ module N2y
     # Uses refresh_token if one is available, or secret_id/secret to
     # obtain a access/refresh pair.
     protected def refresh_tokens
-      if @refresh_token
+      if @token_pair.refresh?
         data = {
-          "refresh" => @refresh_token,
+          "refresh" => @token_pair.refresh,
         }.to_json
 
         response = do_request("POST", URI.parse("token/refresh"), data: data, class: RefreshTokenResponse)
@@ -81,8 +76,8 @@ module N2y
 
         response = do_request("POST", URI.parse("token/new"), data: data, class: TokenResponse)
       end
-      @refresh_token = response.refresh if response.is_a? TokenResponse
-      @access_token = response.access
+      @token_pair.refresh = response.refresh if response.is_a? TokenResponse
+      @token_pair.access = response.access
     end
 
     # Do request.
@@ -92,8 +87,8 @@ module N2y
       # For some reason Nordigen insists that all it's endpoint ends
       # in a slash, and returns a redirect if one forgets.
       path.path = path.path + "/"
-      if @access_token
-        headers["Authorization"] = "Bearer #{@access_token}"
+      if @token_pair.access?
+        headers["Authorization"] = "Bearer #{@token_pair.access}"
       end
       response = HTTP::Client.exec(method, path, headers: headers, body: data)
       handle_status_codes path, response

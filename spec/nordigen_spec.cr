@@ -1,14 +1,17 @@
 require "./spec_helper"
 require "../src/n2y/nordigen"
+require "../src/n2y/token_pair"
 require "webmock"
 require "http/headers"
 
-N2y::Nordigen.configure do |settings|
+include N2y
+
+Nordigen.configure do |settings|
   settings.secret_id = "secret_id"
   settings.secret = "secret"
 end
 
-class DummyResponse < N2y::Nordigen::Response
+class DummyResponse < Nordigen::Response
   getter dummy : String
 end
 
@@ -19,7 +22,7 @@ Spec.before_each do
   WebMock.reset
 end
 
-describe "N2y::Nordigen" do
+describe Nordigen do
   it "fetches tokens when none available" do
     WebMock.stub(:post, "https://ob.nordigen.com/api/v2/token/new/")
       .with(body: "{\"secret_id\":\"secret_id\",\"secret_key\":\"secret\"}", headers: token_expected_headers)
@@ -35,12 +38,13 @@ describe "N2y::Nordigen" do
       end
     end
 
-    nordigen = N2y::Nordigen.new()
+    token_pair = TokenPair.new()
+    nordigen = Nordigen.new(token_pair)
 
     nordigen.get("random_endpoint", class: DummyResponse).dummy.should eq("data")
 
-    nordigen.refresh_token.should eq("refresh_token")
-    nordigen.access_token.should eq("access_token")
+    token_pair.refresh.should eq("refresh_token")
+    token_pair.access.should eq("access_token")
   end
 
   it "fetches uses refresh token when available" do
@@ -58,14 +62,13 @@ describe "N2y::Nordigen" do
       end
     end
 
-    nordigen = N2y::Nordigen.new()
-
-    nordigen.refresh_token = "the_refresh_token"
+    token_pair = TokenPair.new(refresh: "the_refresh_token")
+    nordigen = Nordigen.new(token_pair)
 
     nordigen.get("random_endpoint", class: DummyResponse).dummy.should eq("data")
 
-    nordigen.refresh_token.should eq("the_refresh_token")
-    nordigen.access_token.should eq("new_access_token")
+    token_pair.refresh.should eq("the_refresh_token")
+    token_pair.access.should eq("new_access_token")
   end
 
   it "throws on invalid creds" do
@@ -75,7 +78,7 @@ describe "N2y::Nordigen" do
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
-    nordigen = N2y::Nordigen.new()
+    nordigen = Nordigen.new()
 
     expect_raises(Exception, message: "Invalid secret_id/secret") do
       nordigen.get("random_endpoint", class: DummyResponse)
@@ -90,9 +93,8 @@ describe "N2y::Nordigen" do
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
-    nordigen = N2y::Nordigen.new()
-
-    nordigen.refresh_token = "the_refresh_token"
+    token_pair = TokenPair.new(refresh: "the_refresh_token")
+    nordigen = Nordigen.new(token_pair)
 
     expect_raises(Exception, message: "Invalid or expired refresh token") do
       nordigen.get("random_endpoint", class: DummyResponse)
@@ -100,8 +102,7 @@ describe "N2y::Nordigen" do
   end
 
   it "#get returns requested class" do
-    nordigen = N2y::Nordigen.new()
-    nordigen.access_token = "access_token"
+    nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
     WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/").
       with(body: "", headers: token_expected_headers).
@@ -111,15 +112,14 @@ describe "N2y::Nordigen" do
   end
 
   it "returns a list of banks" do
-    nordigen = N2y::Nordigen.new()
-    nordigen.access_token = "access_token"
+    nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
     WebMock.stub(:get, "https://ob.nordigen.com/api/v2/institutions/?country=DK")
       .with(headers: expected_headers)
       .to_return(body: "[{\"id\":\"BANK1\",\"name\":\"Bank 1\",\"countries\":[\"DK\"],\"logo\":\"1...\"},{\"id\":\"BANK2\",\"name\":\"Bank 2\",\"countries\":[\"DK\"],\"logo\":\"2...\"}]")
 
     banks = nordigen.get_banks("DK")
-    banks.should be_a Array(N2y::Nordigen::Bank)
+    banks.should be_a Array(Nordigen::Bank)
     banks.size.should eq 2
 
     banks[0].id.should eq "BANK1"
