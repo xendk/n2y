@@ -4,6 +4,7 @@ require "json"
 require "http/client"
 require "habitat"
 require "./ynab/*"
+require "./token_pair"
 
 module N2y
   class YNAB
@@ -11,9 +12,6 @@ module N2y
       setting client_id : String
       setting secret : String
     end
-
-    getter access_token : String?
-    getter refresh_token : String?
 
     @oauth_base_uri = URI.parse("https://app.ynab.com/oauth/")
 
@@ -23,7 +21,7 @@ module N2y
       "User-Agent" => "N2y",
     }
 
-    def initialize()
+    def initialize(@token_pair : N2y::TokenPair)
     end
 
     # Get the URI to redirect the user to for authorization.
@@ -54,8 +52,8 @@ module N2y
       response = HTTP::Client.post(uri, headers: @headers, body: "")
       if response.success?
         res = AuthorizeResponse.from_json(response.body)
-        @access_token = res.access_token
-        @refresh_token = res.refresh_token
+        @token_pair.access = res.access_token
+        @token_pair.refresh = res.refresh_token
       else
         raise "Failed to authorize: #{response.body}"
       end
