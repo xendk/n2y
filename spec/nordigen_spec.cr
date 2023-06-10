@@ -99,6 +99,9 @@ describe Nordigen do
     expect_raises(Exception, message: "Invalid or expired refresh token") do
       nordigen.get("random_endpoint", class: DummyResponse)
     end
+
+    # Refresh token should be invalidated.
+    token_pair.refresh?.should be_falsey
   end
 
   it "#get returns requested class" do

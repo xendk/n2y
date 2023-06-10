@@ -51,7 +51,6 @@ module N2y
       begin
         do_request(method, path, data: data, class: klass)
       rescue ex : InvalidAccessToken | InvalidRefreshToken
-        ex.is_a?(InvalidRefreshToken) ? @token_pair.invalidate : @token_pair.invalidate_access
         refresh_tokens
         do_request(method, path, data: data, class: klass)
       end
@@ -106,6 +105,10 @@ module N2y
 
         raise "Unexpected response #{response.status_code} code \"#{response.status_message}\", body: #{response.body}"
       end
+    rescue ex : InvalidAccessToken | InvalidRefreshToken
+      # Always invalidate the token if we get an error.
+      ex.is_a?(InvalidRefreshToken) ? @token_pair.invalidate : @token_pair.invalidate_access
+      raise ex
     end
   end
 end
