@@ -1,6 +1,7 @@
 require "../n2y"
 require "sqlite3"
 require "habitat"
+require "./token_pair"
 
 module N2y
   class User
@@ -50,6 +51,17 @@ SQL
 INSERT INTO users (mail, nordigen_requisition_id, nordigen_bank_id, ynab_refresh_token) VALUES (?, ?, ?, ?)
 SQL
         @exists = true
+      end
+    end
+
+    def ynab_token_pair
+      @token_pair ||= TokenPair.new(refresh: ynab_refresh_token) do |token|
+        p [token.refresh?, @ynab_refresh_token]
+        if @ynab_refresh_token != token.refresh?
+          @ynab_refresh_token = token.refresh
+          p "saving"
+          save
+        end
       end
     end
   end

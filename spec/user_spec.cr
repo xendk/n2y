@@ -37,4 +37,14 @@ describe User do
     user = User.get("any string")
     user.exists?.should be_true
   end
+
+  it "provides an YNAB TokenPair which saves on changes" do
+    user = User.get("tokentest")
+    user.ynab_token_pair.refresh?.should be_falsey
+    user.ynab_token_pair.refresh = "refresh"
+
+    User.clear_cache
+    user = User.get("tokentest")
+    user.ynab_token_pair.refresh.should eq("refresh")
+  end
 end
