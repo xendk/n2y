@@ -23,6 +23,11 @@ N2y::User.configure do |settings|
   settings.db = DB.open ENV["N2Y_DB_URL"]? || N2y::DEFAULT_DB_URL
 end
 
+N2y::YNAB.configure do |settings|
+  settings.client_id = ENV["YNAB_CLIENT_ID"]? || raise "YNAB_CLIENT_ID not set"
+  settings.secret = ENV["YNAB_SECRET"]? || raise "YNAB_SECRET not set"
+end
+
 Raven.configure do |config|
   # Keep main fiber responsive by sending the events in the background.
   config.async = true

@@ -1,1 +1,10 @@
 Hello <%= user.mail %>
+
+<p>
+  YNAB:
+  <% if user.ynab_token_pair.usable? %>
+  Connected
+  <% else %>
+  Not connected <a href="/auth/ynab">connect</a>
+  <% end %>
+</p>

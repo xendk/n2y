@@ -81,19 +81,46 @@ module N2y::App::Auth
     end
   end
 
-  get "/auth/nordigan" do |env|
-  end
-
-  # get "/auth/ynab" do |env|
-  #   redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"
-
-  #   env.redirect(N2y::YNAB.new.redirect_uri(redirect_uri).to_s)
-  # end
-
   # Error page displayed when we don't get a good callback from Google.
   get "/auth/error" do |env|
     title = "Authentication Error"
     content = "Error authenticating with Google. Please try again."
     render "src/views/layout.ecr"
   end
+
+  # get "/auth/nordigan" do |env|
+
+  # end
+
+  # Redirect to YNAB for authentication.
+  get "/auth/ynab" do |env|
+    redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"
+
+    user = (env.get "user").as(N2y::User)
+
+    env.redirect(N2y::YNAB.new(user.ynab_token_pair).redirect_uri(redirect_uri))
+  end
+
+  # Callback from YNAB.
+  get "/auth/ynab/callback" do |env|
+    code = env.params.query["code"].as(String)
+
+    user = (env.get "user").as(N2y::User)
+
+    N2y::YNAB.new(user.ynab_token_pair).authorize(code, URI.parse("#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"))
+
+    env.redirect "/"
+  rescue ex
+    # TODO: Something link `env.error_page = "/auth/ynab/error"` seems nicer.
+    ::Kemal.config.env == "production" ? Raven.capture(ex) : log("Exception: #{ex.inspect_with_backtrace}")
+    env.redirect "/auth/ynab/error"
+  end
+
+    # Error page displayed when we don't get a good callback from YNAB.
+  get "/auth/ynab/error" do |env|
+    title = "Authentication Error"
+    content = "Error authenticating with YNAB. Please try again."
+    render "src/views/layout.ecr"
+  end
+
 end

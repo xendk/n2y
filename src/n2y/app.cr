@@ -1,5 +1,6 @@
 require "multi_auth"
 require "kemal-session"
+require "./ext/*"
 
 module N2y::App
   # Render a view in the default layout.
