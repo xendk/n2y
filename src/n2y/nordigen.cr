@@ -87,6 +87,7 @@ module N2y
       # in a slash, and returns a redirect if one forgets.
       path.path = path.path + "/"
       if @token_pair.access?
+        headers = @headers.dup
         headers["Authorization"] = "Bearer #{@token_pair.access}"
       end
       response = HTTP::Client.exec(method, path, headers: headers, body: data)
