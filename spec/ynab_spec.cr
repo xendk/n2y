@@ -12,7 +12,7 @@ YNAB.configure do |settings|
   settings.secret = "secret"
 end
 
-class DummyResponse < YNAB::Response
+class YNAB::DummyResponse < YNAB::Response
   getter dummy : String
 end
 
@@ -55,7 +55,7 @@ describe YNAB do
       token_pair = TokenPair.new(access: "access_token", refresh: "refresh_token")
       ynab = YNAB.new(token_pair)
 
-      ynab.request("GET", "random", class: DummyResponse).dummy.should eq("dummy_val")
+      ynab.request("GET", "random", class: YNAB::DummyResponse).dummy.should eq("dummy_val")
       token_pair.access.should eq("access_token2")
       token_pair.refresh.should eq("refresh_token2")
     end

@@ -11,7 +11,7 @@ Nordigen.configure do |settings|
   settings.secret = "secret"
 end
 
-class DummyResponse < Nordigen::Response
+class Nordigen::DummyResponse < Nordigen::Response
   getter dummy : String
 end
 
@@ -42,7 +42,7 @@ describe Nordigen do
     token_pair = TokenPair.new()
     nordigen = Nordigen.new(token_pair)
 
-    nordigen.get("random_endpoint", class: DummyResponse).dummy.should eq("data")
+    nordigen.get("random_endpoint", class: Nordigen::DummyResponse).dummy.should eq("data")
 
     token_pair.refresh.should eq("refresh_token")
     token_pair.access.should eq("access_token")
@@ -66,7 +66,7 @@ describe Nordigen do
     token_pair = TokenPair.new(refresh: "the_refresh_token")
     nordigen = Nordigen.new(token_pair)
 
-    nordigen.get("random_endpoint", class: DummyResponse).dummy.should eq("data")
+    nordigen.get("random_endpoint", class: Nordigen::DummyResponse).dummy.should eq("data")
 
     token_pair.refresh.should eq("the_refresh_token")
     token_pair.access.should eq("new_access_token")
@@ -82,7 +82,7 @@ describe Nordigen do
     nordigen = Nordigen.new()
 
     expect_raises(Exception, message: "Invalid secret_id/secret") do
-      nordigen.get("random_endpoint", class: DummyResponse)
+      nordigen.get("random_endpoint", class: Nordigen::DummyResponse)
     end
   end
 
@@ -98,7 +98,7 @@ describe Nordigen do
     nordigen = Nordigen.new(token_pair)
 
     expect_raises(Exception, message: "Invalid or expired refresh token") do
-      nordigen.get("random_endpoint", class: DummyResponse)
+      nordigen.get("random_endpoint", class: Nordigen::DummyResponse)
     end
 
     # Refresh token should be invalidated.
@@ -112,7 +112,7 @@ describe Nordigen do
       with(body: "", headers: token_expected_headers).
       to_return(body: "{\"dummy\": \"data\"}")
 
-    nordigen.get("random_endpoint", class: DummyResponse).dummy.should eq("data")
+    nordigen.get("random_endpoint", class: Nordigen::DummyResponse).dummy.should eq("data")
   end
 
   it "returns a list of banks" do
