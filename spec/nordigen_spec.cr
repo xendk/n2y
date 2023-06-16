@@ -15,6 +15,7 @@ class DummyResponse < Nordigen::Response
   getter dummy : String
 end
 
+api_root = "https://bankaccountdata.gocardless.com/api/v2/"
 token_expected_headers = HTTP::Headers{"Accept" => "application/json", "Content-Type" => "application/json", "User-Agent" => "N2y"}
 expected_headers = token_expected_headers.dup.add("Authorization", "Bearer access_token")
 
@@ -24,11 +25,11 @@ end
 
 describe Nordigen do
   it "fetches tokens when none available" do
-    WebMock.stub(:post, "https://ob.nordigen.com/api/v2/token/new/")
+    WebMock.stub(:post, api_root + "token/new/")
       .with(body: "{\"secret_id\":\"secret_id\",\"secret_key\":\"secret\"}", headers: token_expected_headers)
       .to_return(body: "{\"access\": \"access_token\",\"access_expires\": 86400,\"refresh\": \"refresh_token\",\"refresh_expires\": 2592000}")
 
-    WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/")
+    WebMock.stub(:get, api_root + "random_endpoint/")
       .with(body: "", headers: token_expected_headers)
       .to_return do |request|
       if request.headers["Authorization"]? != "Bearer access_token"
@@ -47,12 +48,12 @@ describe Nordigen do
     token_pair.access.should eq("access_token")
   end
 
-  it "fetches uses refresh token when available" do
-    WebMock.stub(:post, "https://ob.nordigen.com/api/v2/token/refresh/")
+  it "uses refresh token when available" do
+    WebMock.stub(:post, api_root + "token/refresh/")
       .with(body: "{\"refresh\":\"the_refresh_token\"}", headers: token_expected_headers)
       .to_return(body: "{\"access\": \"new_access_token\",\"access_expires\": 86400}")
 
-    WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/")
+    WebMock.stub(:get, api_root + "random_endpoint/")
       .with(body: "", headers: token_expected_headers)
       .to_return do |request|
       if request.headers["Authorization"]? != "Bearer new_access_token"
@@ -72,9 +73,9 @@ describe Nordigen do
   end
 
   it "throws on invalid creds" do
-    WebMock.stub(:post, "https://ob.nordigen.com/api/v2/token/new/")
+    WebMock.stub(:post, api_root + "token/new/")
       .to_return(status: 401)
-    WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/")
+    WebMock.stub(:get, api_root + "random_endpoint/")
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
@@ -86,10 +87,10 @@ describe Nordigen do
   end
 
   it "throws on invalid refresh token" do
-    WebMock.stub(:post, "https://ob.nordigen.com/api/v2/token/refresh/")
+    WebMock.stub(:post, api_root + "token/refresh/")
       .with(body: "{\"refresh\":\"the_refresh_token\"}", headers: token_expected_headers)
       .to_return(status: 401)
-    WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/")
+    WebMock.stub(:get, api_root + "random_endpoint/")
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
@@ -107,7 +108,7 @@ describe Nordigen do
   it "#get returns requested class" do
     nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
-    WebMock.stub(:get, "https://ob.nordigen.com/api/v2/random_endpoint/").
+    WebMock.stub(:get, api_root + "random_endpoint/").
       with(body: "", headers: token_expected_headers).
       to_return(body: "{\"dummy\": \"data\"}")
 
@@ -117,7 +118,7 @@ describe Nordigen do
   it "returns a list of banks" do
     nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
-    WebMock.stub(:get, "https://ob.nordigen.com/api/v2/institutions/?country=DK")
+    WebMock.stub(:get, api_root + "institutions/?country=DK")
       .with(headers: expected_headers)
       .to_return(body: "[{\"id\":\"BANK1\",\"name\":\"Bank 1\",\"countries\":[\"DK\"],\"logo\":\"1...\"},{\"id\":\"BANK2\",\"name\":\"Bank 2\",\"countries\":[\"DK\"],\"logo\":\"2...\"}]")
 

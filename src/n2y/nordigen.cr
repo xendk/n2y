@@ -20,7 +20,7 @@ module N2y
     }
 
     def initialize(@token_pair : N2y::TokenPair = N2y::TokenPair.new)
-      @base_uri = URI.parse("https://ob.nordigen.com/api/v2/")
+      @base_uri = URI.parse("https://bankaccountdata.gocardless.com/api/v2/")
       @headers = HTTP::Headers {
         "Accept" => "application/json",
         "Content-Type" => "application/json",
