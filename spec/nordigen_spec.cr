@@ -1,7 +1,6 @@
 require "./spec_helper"
 require "../src/n2y/nordigen"
 require "../src/n2y/token_pair"
-require "webmock"
 require "http/headers"
 
 include N2y

@@ -1,5 +1,7 @@
 require "spec"
 require "../src/n2y/user"
+# Mock all HTTP requests.
+require "webmock"
 
 # Use a temporary database for testing.
 DB_FIXURE = "/tmp/n2y-spec.db"

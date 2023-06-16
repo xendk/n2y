@@ -1,7 +1,6 @@
 require "./spec_helper"
 require "../src/n2y/ynab"
 require "../src/n2y/token_pair"
-require "webmock"
 
 example_uri = URI.parse("https://example.com/")
 
