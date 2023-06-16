@@ -35,6 +35,10 @@ Raven.configure do |config|
   config.current_environment = Kemal.config.env
 end
 
+def log_exception(ex)
+  Kemal.config.env == "production" ? Raven.capture(ex) : log("Exception: #{ex.inspect_with_backtrace}")
+end
+
 # Capture logs to Sentry.
 if Kemal.config.env == "development"
   # ... but log to STDOUT too in development.

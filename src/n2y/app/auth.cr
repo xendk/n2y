@@ -112,7 +112,7 @@ module N2y::App::Auth
     env.redirect "/"
   rescue ex
     # TODO: Something link `env.error_page = "/auth/ynab/error"` seems nicer.
-    ::Kemal.config.env == "production" ? Raven.capture(ex) : log("Exception: #{ex.inspect_with_backtrace}")
+    log_exception(ex)
     env.redirect "/auth/ynab/error"
   end
 

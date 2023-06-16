@@ -19,3 +19,8 @@ end
 N2y::User.configure do |settings|
   settings.db = DB.open DB_URL
 end
+
+# This is defined by server.cr, so make it available.
+def log_exception(ex)
+  raise ex
+end
