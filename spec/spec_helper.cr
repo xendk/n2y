@@ -20,6 +20,12 @@ N2y::User.configure do |settings|
   settings.db = DB.open DB_URL
 end
 
+Kemal::Session.config do |config|
+  config.cookie_name = "n2y_session_id"
+  config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
+  config.gc_interval = 2.minutes # 2 minutes
+end
+
 # This is defined by server.cr, so make it available.
 def log_exception(ex)
   raise ex

@@ -1,6 +1,8 @@
 require "./spec_helper"
 require "spec-kemal"
 require "../src/n2y/app"
+require "../src/n2y/nordigen"
+require "../src/n2y/ynab"
 # Use a mock of MultiAuth that'll always return a user when we hit
 # /auth/callback.
 require "./mock-multi_auth"
