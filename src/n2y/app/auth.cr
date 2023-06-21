@@ -88,9 +88,45 @@ module N2y::App::Auth
     render "src/views/layout.ecr"
   end
 
-  # get "/auth/nordigan" do |env|
+  # Select a bank to authenticate with.
+  get "/auth/nordigen/select_bank" do |env|
+    title = "Select Bank"
+    banks = Nordigen.new.get_banks "DK"
+    N2y::App.render_page "select_bank"
+  end
 
-  # end
+  # Start authentication with Nordigen with selected bank.
+  get "/auth/nordigen/:bank_id" do |env|
+    bank_id = env.params.url["bank_id"].as(String)
+    redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/nordigen/callback"
+
+    user = (env.get "user").as(N2y::User)
+    requisition_id, url = N2y::Nordigen.new().create_requisition(bank_id, URI.parse(redirect_uri), user.mail)
+    env.session.string("nordigen_requisition_id", requisition_id)
+
+    env.redirect url
+  end
+
+  # Callback from Nordigen.
+  get "/auth/nordigen/callback" do |env|
+    user = (env.get "user").as(N2y::User)
+
+    user.nordigen_requisition_id = env.session.string("nordigen_requisition_id")
+    user.save
+
+    env.redirect "/"
+  rescue ex
+    # TODO: Something link `env.error_page = "/auth/ynab/error"` seems nicer.
+    log_exception(ex)
+    env.redirect "/auth/nordigen/error"
+  end
+
+  # Error page displayed when we don't get a good callback from YNAB.
+  get "/auth/nordigen/error" do |env|
+    title = "Authentication Error"
+    content = "Error authenticating with Nordigen. Please try again."
+    render "src/views/layout.ecr"
+  end
 
   # Redirect to YNAB for authentication.
   get "/auth/ynab" do |env|
@@ -116,7 +152,7 @@ module N2y::App::Auth
     env.redirect "/auth/ynab/error"
   end
 
-    # Error page displayed when we don't get a good callback from YNAB.
+  # Error page displayed when we don't get a good callback from YNAB.
   get "/auth/ynab/error" do |env|
     title = "Authentication Error"
     content = "Error authenticating with YNAB. Please try again."

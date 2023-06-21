@@ -1,6 +1,15 @@
 Hello <%= user.mail %>
 
 <p>
+  Nordigan:
+  <% if user.nordigen_requisition_id %>
+  Connected
+  <% else %>
+  Not connected <a href="/auth/nordigen/select_bank">connect</a>
+  <% end %>
+</p>
+
+<p>
   YNAB:
   <% if user.ynab_token_pair.usable? %>
   Connected
@@ -8,3 +17,4 @@ Hello <%= user.mail %>
   Not connected <a href="/auth/ynab">connect</a>
   <% end %>
 </p>
+

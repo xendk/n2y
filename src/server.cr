@@ -1,9 +1,11 @@
 require "dotenv"
 require "kemal"
+require "file_utils"
 require "multi_auth"
 require "raven"
 require "raven/integrations/kemal"
 require "./n2y"
+require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
 require "sqlite3"
@@ -21,6 +23,11 @@ MultiAuth.config(
 
 N2y::User.configure do |settings|
   settings.db = DB.open ENV["N2Y_DB_URL"]? || N2y::DEFAULT_DB_URL
+end
+
+N2y::Nordigen.configure do |settings|
+  settings.secret_id = ENV["NORDIGEN_SECRET_ID"]? || raise "NORDIGEN_SECRET_ID not set"
+  settings.secret = ENV["NORDIGEN_SECRET"]? || raise "NORDIGEN_SECRET not set"
 end
 
 N2y::YNAB.configure do |settings|

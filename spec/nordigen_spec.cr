@@ -133,4 +133,18 @@ describe Nordigen do
     banks[1].name.should eq "Bank 2"
     banks[1].logo.should eq "2..."
   end
+
+  it "can request a request a requisition" do
+    nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
+
+    WebMock.stub(:post, api_root + "requisitions/")
+      .with(body: "{\"redirect\":\"https://google.com\",\"institution_id\":\"MYBANK\",\"reference\":\"userreference\",\"user_language\":\"DA\"}", headers: expected_headers)
+           # Not a full response, but what we care about.
+      .to_return(body: "{\"id\":\"123\",\"redirect\":\"https://google.com\",\"reference\":\"userreference\",\"user_language\":\"DA\",\"link\":\"https://magicurlatgocardless.com/something\"}")
+
+    requisition_id, redirect_uri = nordigen.create_requisition("MYBANK", URI.parse("https://google.com"), "userreference")
+
+    requisition_id.should eq "123"
+    redirect_uri.should eq URI.parse("https://magicurlatgocardless.com/something")
+  end
 end

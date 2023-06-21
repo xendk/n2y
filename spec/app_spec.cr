@@ -7,6 +7,12 @@ require "../src/n2y/ynab"
 # /auth/callback.
 require "./mock-multi_auth"
 
+Kemal::Session.config do |config|
+  config.cookie_name = "n2y_session_id"
+  config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
+  config.gc_interval = 2.minutes # 2 minutes
+end
+
 # Use the same fixture for all the tests. They should be safe to run
 # on the same database.
 load_fixture("just-one-user")

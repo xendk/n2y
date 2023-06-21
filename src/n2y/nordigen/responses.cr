@@ -25,6 +25,13 @@ module N2y
       end
     end
 
+    class RequisitionResponse < Response
+      getter id : String
+      getter redirect : String
+      getter reference : String
+      getter link : String
+    end
+
     alias Responses = Response | Array(Response)
   end
 end

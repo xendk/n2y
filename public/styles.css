@@ -15,3 +15,31 @@ input[type="submit"] {
   padding: 4px 8px;
   font-size: 1em;
 }
+
+.bank_list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.bank_list li {
+  border: 1px solid grey;
+  margin: 4px 0;
+}
+
+.bank_list a {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  text-decoration: none;
+  color: black;
+}
+
+.bank_list a:hover {
+  background-color: lightgray;
+}
+
+.bank_list img {
+  height: 32px;
+  width: 32px;
+}

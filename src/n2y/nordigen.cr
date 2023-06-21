@@ -33,6 +33,18 @@ module N2y
       get("institutions", query: {"country" => lang}, class: Array(Bank))
     end
 
+    def create_requisition(bank_id : String, redirect_uri : URI, reference : String) : {String, URI}
+      data = {
+        "redirect" => redirect_uri.to_s,
+        "institution_id" => bank_id,
+        "reference" => reference,
+        "user_language" => "DA",
+      }
+
+      response = post("requisitions", data: data, class: RequisitionResponse)
+      {response.id, URI.parse(response.link)}
+    end
+
     # Make a GET request at Nordigen.
     def get(path : String, *, data = nil, query = nil, class klass : Responses.class)
       request("GET", path, query: query, data: data, class: klass)
