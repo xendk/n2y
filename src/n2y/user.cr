@@ -55,10 +55,8 @@ SQL
 
     def ynab_token_pair
       @token_pair ||= TokenPair.new(refresh: ynab_refresh_token) do |token|
-        p [token.refresh?, @ynab_refresh_token]
         if @ynab_refresh_token != token.refresh?
           @ynab_refresh_token = token.refresh
-          p "saving"
           save
         end
       end
