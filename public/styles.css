@@ -16,17 +16,17 @@ input[type="submit"] {
   font-size: 1em;
 }
 
-.bank_list {
+.bank-list {
   list-style-type: none;
   padding: 0;
 }
 
-.bank_list li {
+.bank-list li {
   border: 1px solid grey;
   margin: 4px 0;
 }
 
-.bank_list a {
+.bank-list a {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -35,11 +35,11 @@ input[type="submit"] {
   color: black;
 }
 
-.bank_list a:hover {
+.bank-list a:hover {
   background-color: lightgray;
 }
 
-.bank_list img {
+.bank-list img {
   height: 32px;
   width: 32px;
 }

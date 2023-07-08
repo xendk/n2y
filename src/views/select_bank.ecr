@@ -1,6 +1,6 @@
 Please select your bank from the list:
 
-<ul class="bank_list">
+<ul class="bank-list">
   <%- banks.each do |bank| -%>
   <li><a href="/auth/nordigen/<%= bank.id %>"><img src="<%= bank.logo %>"> <%= bank.name %></a></li>
   <%- end -%>
