@@ -38,6 +38,13 @@ module N2y
       render_page "index"
     end
 
+    get "/log" do |env|
+      title = "Log"
+      user = (env.get "user").as(N2y::User)
+      entries = user.log_entries
+      render_page "log"
+    end
+
     get "/privacy-policy" do |env|
       title = "Privacy Policy"
       N2y::App.render_page "privacy-policy"

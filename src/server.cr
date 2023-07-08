@@ -8,7 +8,9 @@ require "./n2y"
 require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
+require "./n2y/database_log_backend"
 require "sqlite3"
+require "log"
 
 Dotenv.load
 
@@ -20,9 +22,18 @@ MultiAuth.config(
   ENV["GOOGLE_CLIENT_ID"],
   ENV["GOOGLE_CLIENT_SECRET"]
 )
+db = DB.open ENV["N2Y_DB_URL"]? || N2y::DEFAULT_DB_URL
 
 N2y::User.configure do |settings|
-  settings.db = DB.open ENV["N2Y_DB_URL"]? || N2y::DEFAULT_DB_URL
+  settings.db = db
+end
+
+N2y::DatabaseLogBackend.configure do |settings|
+  settings.db = db
+end
+
+Log.setup do |c|
+  c.bind "n2y.user", :debug, N2y::DatabaseLogBackend.new
 end
 
 N2y::Nordigen.configure do |settings|

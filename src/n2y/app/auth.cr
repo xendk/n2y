@@ -25,6 +25,7 @@ module N2y::App::Auth
         user = N2y::User.get(context.session.string("user_id"))
         if user.exists?
           context.set "user", user
+          N2y::User::Log.context.set user_id: context.session.string("user_id")
           call_next(context)
         else
           # New users have to accept the terms of service. We don't
@@ -56,6 +57,9 @@ module N2y::App::Auth
 
     if mail
       env.session.string("user_id", mail)
+
+      N2y::User::Log.context.set user_id: env.session.string("user_id")
+      N2y::User::Log.info { "Logged in" }
 
       env.redirect "/"
     else
@@ -112,6 +116,8 @@ module N2y::App::Auth
     user = (env.get "user").as(N2y::User)
 
     user.nordigen_requisition_id = env.session.string("nordigen_requisition_id")
+    N2y::User::Log.info { "Authenticated with Nordigen" }
+
     user.save
 
     env.redirect "/"
@@ -144,6 +150,8 @@ module N2y::App::Auth
     user = (env.get "user").as(N2y::User)
 
     N2y::YNAB.new(user.ynab_token_pair).authorize(code, URI.parse("#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"))
+    N2y::User::Log.info { "Authenticated with YNAB" }
+
 
     env.redirect "/"
   rescue ex

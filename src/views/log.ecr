@@ -1,0 +1,30 @@
+<p>
+  This is the latest log entries for your account.
+</p>
+
+<table class="log-table">
+  <thead>
+    <tr>
+      <th class="head">Time</th>
+      <th class="head">Severity</th>
+      <th class="head">Message</th>
+    </tr>
+    <tr>
+      <th colspan=3>Data</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% entries.each do |entry| %>
+    <tr>
+      <td class="timestamp"><%= entry[:timestamp] %></td>
+      <td class="severity"><%= entry[:severity] %></td>
+      <td class="message"><%= entry[:message] %></td>
+    </tr>
+    <% if entry[:data] != "" %>
+    <tr>
+      <td colspan=3 class="data"><span class="data-toggle">[toggle JSON data]</span><pre><%= entry[:data] %></pre></td>
+    </tr>
+    <% end %>
+    <% end %>
+  </tbody>
+</table>

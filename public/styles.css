@@ -1,5 +1,15 @@
 body {
   font-family: 'Open Sans', sans-serif;
+  background-color: white;
+}
+
+.menu {
+  max-width: 800px;
+  margin: auto;
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
 }
 
 .main-content {
@@ -11,7 +21,7 @@ body {
 input[type="submit"] {
   font-family: 'Open Sans', sans-serif;
   border: 2px solid #000;
-  background-color: #fff;
+  background-color: white;
   padding: 4px 8px;
   font-size: 1em;
 }
@@ -42,4 +52,31 @@ input[type="submit"] {
 .bank-list img {
   height: 32px;
   width: 32px;
+}
+
+.log-table th.head {
+  text-align: left;
+}
+
+.log-table {
+  width: 100%;
+  border-spacing: 1em;
+}
+
+.log-table tr {
+}
+
+.log-table .data {
+  position: relative;
+  text-align: center;
+}
+
+.log-table .data pre {
+  height: 0;
+  overflow: hidden;
+  margin: 0;
+  text-align: left;
+}
+.log-table .data.active pre {
+  height: auto;
 }

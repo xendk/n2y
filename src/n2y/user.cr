@@ -1,10 +1,13 @@
 require "../n2y"
 require "sqlite3"
 require "habitat"
+require "log"
 require "./token_pair"
 
 module N2y
   class User
+    Log = ::Log.for(self)
+
     Habitat.create do
       setting db : DB::Database
     end
@@ -60,6 +63,23 @@ SQL
           save
         end
       end
+    end
+
+    # Get log entries for this user.
+    def log_entries
+      entries = [] of NamedTuple(timestamp: String, severity: String, message: String, data: String)
+      settings.db.query "select timestamp, severity, message, data from log where mail = ? order by timestamp desc", @mail do |rs|
+        rs.each do
+          timestamp = Time.unix(rs.read(Int32)).to_rfc3339
+          severity = rs.read(String)
+          message = rs.read(String)
+          data = rs.read(String)
+
+          entries << {timestamp: timestamp, severity: severity, message: message, data: data}
+        end
+      end
+
+      entries
     end
   end
 end
