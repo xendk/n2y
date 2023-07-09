@@ -2,6 +2,7 @@ require "spec"
 require "../src/n2y/user"
 # Mock all HTTP requests.
 require "webmock"
+require "kemal"
 
 # Use a temporary database for testing.
 DB_FIXURE = "/tmp/n2y-spec.db"
@@ -19,6 +20,9 @@ end
 N2y::User.configure do |settings|
   settings.db = DB.open DB_URL
 end
+
+# Use another port for testing.
+Kemal.config.port = 3001
 
 # This is defined by server.cr, so make it available.
 def log_exception(ex)
