@@ -25,11 +25,24 @@ module N2y
       end
     end
 
-    class RequisitionResponse < Response
+    class CreateRequisitionResponse < Response
       getter id : String
       getter redirect : String
       getter reference : String
       getter link : String
+    end
+
+    class Requisition < Response
+      getter accounts : Array(String)
+    end
+
+    class AccountResponse < Response
+      getter account : Account
+    end
+
+    class Account < Response
+      getter iban : String
+      getter name : String
     end
 
     alias Responses = Response | Array(Response)

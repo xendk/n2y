@@ -134,17 +134,40 @@ describe Nordigen do
     banks[1].logo.should eq "2..."
   end
 
-  it "can request a request a requisition" do
+  it "can request a requisition" do
     nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
     WebMock.stub(:post, api_root + "requisitions/")
       .with(body: "{\"redirect\":\"https://google.com\",\"institution_id\":\"MYBANK\",\"reference\":\"userreference\",\"user_language\":\"DA\"}", headers: expected_headers)
-           # Not a full response, but what we care about.
+      # Not a full response, but what we care about.
       .to_return(body: "{\"id\":\"123\",\"redirect\":\"https://google.com\",\"reference\":\"userreference\",\"user_language\":\"DA\",\"link\":\"https://magicurlatgocardless.com/something\"}")
 
     requisition_id, redirect_uri = nordigen.create_requisition("MYBANK", URI.parse("https://google.com"), "userreference")
 
     requisition_id.should eq "123"
     redirect_uri.should eq URI.parse("https://magicurlatgocardless.com/something")
+  end
+
+  describe "with a requisition" do
+    it "can fetch accounts" do
+      nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
+
+      # Not full responses, but what we care about.
+      WebMock.stub(:get, api_root + "requisitions/123/")
+        .with(headers: expected_headers)
+        .to_return(body: "{\"accounts\":[\"a1\",\"a2\"]}")
+
+      WebMock.stub(:get, api_root + "accounts/a1/details/")
+        .with(headers: expected_headers)
+        .to_return(body: "{\"account\":{\"iban\":\"iban1\",\"name\":\"name1\"}}")
+
+      WebMock.stub(:get, api_root + "accounts/a2/details/")
+        .with(headers: expected_headers)
+        .to_return(body: "{\"account\":{\"iban\":\"iban2\",\"name\":\"name2\"}}")
+
+      accounts = nordigen.accounts("123")
+      # accounts.should be_a Array(Nordigen::Account)
+      accounts.size.should eq 2
+    end
   end
 end

@@ -33,6 +33,17 @@ module N2y
       get("institutions", query: {"country" => lang}, class: Array(Bank))
     end
 
+    def accounts(requisition_id : String)
+      accounts = [] of Account
+      requisition = get("requisitions/#{requisition_id}", class: Requisition)
+      requisition.accounts.each do |account_id|
+        response = get("accounts/#{account_id}/details", class: AccountResponse)
+        accounts << response.account
+      end
+
+      accounts
+    end
+
     def create_requisition(bank_id : String, redirect_uri : URI, reference : String) : {String, URI}
       data = {
         "redirect" => redirect_uri.to_s,
@@ -41,7 +52,7 @@ module N2y
         "user_language" => "DA",
       }
 
-      response = post("requisitions", data: data, class: RequisitionResponse)
+      response = post("requisitions", data: data, class: CreateRequisitionResponse)
       {response.id, URI.parse(response.link)}
     end
 
