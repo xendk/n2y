@@ -11,6 +11,7 @@ require "./n2y/user"
 require "./n2y/database_log_backend"
 require "sqlite3"
 require "log"
+require "http/cookie"
 
 Dotenv.load
 
@@ -72,6 +73,7 @@ FileUtils.mkdir_p ENV["SESSION_DIR"] if ENV["SESSION_DIR"]?
 
 Kemal::Session.config do |config|
   config.cookie_name = "n2y_session_id"
+  config.samesite = :strict
   config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
   config.gc_interval = 2.minutes # 2 minutes
   if ENV["SESSION_DIR"]?
