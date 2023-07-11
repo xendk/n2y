@@ -1,6 +1,6 @@
 
-window.addEventListener("load", () => {
-  const data_rows = document.querySelectorAll(".log-table .data-toggle");
+htmx.on("htmx:load", function(evt) {
+  const data_rows = evt.detail.elt.querySelectorAll(".log-table .data-toggle");
 
   data_rows.forEach((data) => {
     const onClick = (e) => {
