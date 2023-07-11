@@ -18,6 +18,7 @@ module N2y
     getter? exists : Bool = false
     property nordigen_requisition_id : String?
     property ynab_refresh_token : String?
+    property mapping : String = ""
 
     def self.get(mail : String)
       (@@users[mail] ||= User.new(mail)).tap &.load
@@ -34,23 +35,23 @@ module N2y
 
     def load
       @exists = false
-      row = settings.db.query_one? <<-SQL, mail, as: {String, String?, String?, String?}
-SELECT mail, nordigen_requisition_id, ynab_refresh_token FROM users WHERE mail = ?
+      row = settings.db.query_one? <<-SQL, mail, as: {String, String?, String?, String}
+SELECT mail, nordigen_requisition_id, ynab_refresh_token, mapping FROM users WHERE mail = ?
 SQL
       if row
-        @mail, @nordigen_requisition_id, @ynab_refresh_token = row
+        @mail, @nordigen_requisition_id, @ynab_refresh_token, @mapping = row
         @exists = true
       end
     end
 
     def save
       if exists?
-        settings.db.exec <<-SQL, nordigen_requisition_id, ynab_refresh_token, mail
-UPDATE users SET nordigen_requisition_id = ?, ynab_refresh_token = ? WHERE mail = ?
+        settings.db.exec <<-SQL, nordigen_requisition_id, ynab_refresh_token, mapping, mail
+UPDATE users SET nordigen_requisition_id = ?, ynab_refresh_token = ?, mapping = ? WHERE mail = ?
 SQL
       else
-        settings.db.exec <<-SQL, mail, nordigen_requisition_id, ynab_refresh_token
-INSERT INTO users (mail, nordigen_requisition_id, ynab_refresh_token) VALUES (?, ?, ?)
+        settings.db.exec <<-SQL, mail, nordigen_requisition_id, ynab_refresh_token, mapping
+INSERT INTO users (mail, nordigen_requisition_id, ynab_refresh_token, mapping) VALUES (?, ?, ?, ?)
 SQL
         @exists = true
       end

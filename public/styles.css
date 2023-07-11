@@ -80,3 +80,11 @@ input[type="submit"] {
 .log-table .data.active pre {
   height: auto;
 }
+
+.mapping-form label {
+  display: block;
+}
+
+.mapping-form .form-element {
+  margin-bottom: 1rem;
+}

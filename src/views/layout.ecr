@@ -3,9 +3,15 @@
   <head>
     <title><%= title %> | N2Y</title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="/htmx.min.js"></script>
     <script src="/script.js"></script>
   </head>
   <body>
+    <ul class="menu" hx-boost="true">
+      <li><a href="/">Overview</a></li>
+      <li><a href="/mapping">Account mapping</a></li>
+      <li><a href="/log">Log</a></li>
+    </ul>
     <div class="main-content">
       <%= content %>
     </div>
