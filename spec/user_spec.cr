@@ -47,4 +47,17 @@ describe User do
     user = User.get("tokentest")
     user.ynab_token_pair.refresh.should eq("refresh")
   end
+
+  it "stores account mapping" do
+    mapping = {} of String => NamedTuple(id: String, budget_id: String)
+
+    mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
+    mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
+
+    User.clear_cache
+    user = User.get("tokentest")
+
+    user.mapping = mapping
+    user.mapping.should eq(mapping)
+  end
 end

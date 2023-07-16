@@ -73,7 +73,7 @@ module N2y
       end
 
       mapping = {} of String => String
-      Hash(String, NamedTuple(id: String, budget_id: String)).from_json(user.mapping).each do |key, value|
+      user.mapping.each do |key, value|
         mapping[key] = value[:id] + "|" + value[:budget_id]
       end
 
@@ -100,7 +100,7 @@ module N2y
         end
       end
 
-      user.mapping = mapping.to_json
+      user.mapping = mapping
       user.save
       env.redirect "/"
     end
