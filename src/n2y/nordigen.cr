@@ -44,6 +44,22 @@ module N2y
       accounts
     end
 
+    def transactions(account_id : String, *, from : Time | Nil = nil, to : Time | Nil = nil)
+      transactions = [] of JSON::Any
+      query = nil
+      if from || to
+        query = {} of String => String
+        query["from"] = from.to_s("%Y-%m-%d") if from
+        query["to"] = to.to_s("%Y-%m-%d") if to
+      end
+      data = get("accounts/#{account_id}/transactions", class: JSON::Any)
+      begin
+        data.dig("transactions", "booked").as_a
+      rescue
+        [] of JSON::Any
+      end
+    end
+
     def create_requisition(bank_id : String, redirect_uri : URI, reference : String) : {String, URI}
       data = {
         "redirect" => redirect_uri.to_s,

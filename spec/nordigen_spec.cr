@@ -175,5 +175,25 @@ describe Nordigen do
     accounts["a2"].iban.should eq "iban2"
     accounts["a2"].name.should eq "name2"
   end
+
+  it "can fetch account transactions" do
+    nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
+
+    # Fictional response, we're just checking that it returns the
+    # content of the "booked" key as JSON::Any.
+    WebMock.stub(:get, api_root + "accounts/123/transactions/")
+      .with(headers: expected_headers)
+      .to_return(body: "{\"transactions\":{\"booked\":[{\"id\":\"1\",\"name\":\"one\"},{\"id\":\"2\",\"name\":\"two\"}],\"pending\":[{\"id\":\"3\",\"name\":\"three\"}]}}")
+
+    transactions = nordigen.transactions("123")
+
+    transactions.should be_a Array(JSON::Any)
+    transactions.size.should eq 2
+
+    transactions[0]["id"].as_s.should eq "1"
+    transactions[0]["name"].as_s.should eq "one"
+
+    transactions[1]["id"].as_s.should eq "2"
+    transactions[1]["name"].as_s.should eq "two"
   end
 end

@@ -45,6 +45,6 @@ module N2y
       getter name : String
     end
 
-    alias Responses = Response | Array(Response)
+    alias Responses = Response | Array(Response) | JSON::Any
   end
 end
