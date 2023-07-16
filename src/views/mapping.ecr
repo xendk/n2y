@@ -3,7 +3,7 @@
 </p>
 
 <form class="mapping-form" action="/mapping/save" method="post">
-  <% nordigen_accounts.each do |nordigen_account| %>
+  <% nordigen_accounts.values.each do |nordigen_account| %>
   <div class="form-element">
     <label for="<%= nordigen_account.iban %>"><%= nordigen_account.name %></label>
     <select name="mapping[<%= nordigen_account.iban %>]" id="<%= nordigen_account.iban %>">

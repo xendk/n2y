@@ -34,11 +34,11 @@ module N2y
     end
 
     def accounts(requisition_id : String)
-      accounts = [] of Account
+      accounts = {} of String => Account
       requisition = get("requisitions/#{requisition_id}", class: Requisition)
       requisition.accounts.each do |account_id|
         response = get("accounts/#{account_id}/details", class: AccountResponse)
-        accounts << response.account
+        accounts[account_id] = response.account
       end
 
       accounts

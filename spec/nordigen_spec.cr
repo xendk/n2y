@@ -148,26 +148,32 @@ describe Nordigen do
     redirect_uri.should eq URI.parse("https://magicurlatgocardless.com/something")
   end
 
-  describe "with a requisition" do
-    it "can fetch accounts" do
-      nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
+  it "can fetch accounts with a requisition" do
+    nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
-      # Not full responses, but what we care about.
-      WebMock.stub(:get, api_root + "requisitions/123/")
-        .with(headers: expected_headers)
-        .to_return(body: "{\"accounts\":[\"a1\",\"a2\"]}")
+    # Not full responses, but what we care about.
+    WebMock.stub(:get, api_root + "requisitions/123/")
+      .with(headers: expected_headers)
+      .to_return(body: "{\"accounts\":[\"a1\",\"a2\"]}")
 
-      WebMock.stub(:get, api_root + "accounts/a1/details/")
-        .with(headers: expected_headers)
-        .to_return(body: "{\"account\":{\"iban\":\"iban1\",\"name\":\"name1\"}}")
+    WebMock.stub(:get, api_root + "accounts/a1/details/")
+      .with(headers: expected_headers)
+      .to_return(body: "{\"account\":{\"iban\":\"iban1\",\"name\":\"name1\"}}")
 
-      WebMock.stub(:get, api_root + "accounts/a2/details/")
-        .with(headers: expected_headers)
-        .to_return(body: "{\"account\":{\"iban\":\"iban2\",\"name\":\"name2\"}}")
+    WebMock.stub(:get, api_root + "accounts/a2/details/")
+      .with(headers: expected_headers)
+      .to_return(body: "{\"account\":{\"iban\":\"iban2\",\"name\":\"name2\"}}")
 
-      accounts = nordigen.accounts("123")
-      # accounts.should be_a Array(Nordigen::Account)
-      accounts.size.should eq 2
-    end
+    accounts = nordigen.accounts("123")
+
+    accounts.should be_a Hash(String, Nordigen::Account)
+    accounts.size.should eq 2
+
+    accounts["a1"].iban.should eq "iban1"
+    accounts["a1"].name.should eq "name1"
+
+    accounts["a2"].iban.should eq "iban2"
+    accounts["a2"].name.should eq "name2"
+  end
   end
 end

@@ -47,7 +47,7 @@ module N2y
       user = (env.get "user").as(N2y::User)
       error : String?
 
-      nordigen_accounts = [] of Nordigen::Account
+      nordigen_accounts = {} of String => Nordigen::Account
       ynab_accounts = [] of YNAB::Account
 
       begin
