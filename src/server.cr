@@ -34,6 +34,10 @@ N2y::DatabaseLogBackend.configure do |settings|
 end
 
 Log.setup do |c|
+  # Capture all logs if DEBUG env variable is set.
+  if ENV["DEBUG"]?
+    c.bind "*", :trace, Log::IOBackend.new(STDOUT)
+  end
   c.bind "n2y.user", :debug, N2y::DatabaseLogBackend.new
 end
 
