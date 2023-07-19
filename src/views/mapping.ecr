@@ -1,8 +1,17 @@
-<p>
-  Select which YNAB account to map Bank accounts to.
-</p>
 
 <form class="mapping-form" action="/mapping/save" method="post">
+  <div class="form-element">
+    <label for="last_sync_time">Sync start date</label>
+    <input id="last_sync_time" name="last_sync_time" type="text" value="<%= user.last_sync_time.to_s("%Y-%m-%d") %>">
+    <p class="description">
+      The next sync fetches all transactions from this date up to today.
+    </p>
+  </div>
+
+  <p>
+    Select which YNAB account to map bank accounts to.
+  </p>
+
   <% nordigen_accounts.values.each do |nordigen_account| %>
   <div class="form-element">
     <label for="<%= nordigen_account.iban %>"><%= nordigen_account.name %></label>
@@ -14,6 +23,17 @@
     </select>
   </div>
   <% end %>
+
+
+  <div class="form-element">
+    <label for="id_seed">ID Seed</label>
+    <input id="id_seed" name="id_seed" type="text" value="<%= user.id_seed %>">
+    <p class="description">
+      Seed for the YNAB import_id generation. Should generally be
+      empty, but can (and should) be set to any random value when
+      testing.
+    </p>
+  </div>
 
   <input type="submit" value="Save mapping">
 </form>

@@ -44,15 +44,15 @@ module N2y
       accounts
     end
 
-    def transactions(account_id : String, *, from : Time | Nil = nil, to : Time | Nil = nil)
+    def transactions(account_id : String, *, from : Time? = nil, to : Time? = nil)
       transactions = [] of JSON::Any
       query = nil
       if from || to
         query = {} of String => String
-        query["from"] = from.to_s("%Y-%m-%d") if from
-        query["to"] = to.to_s("%Y-%m-%d") if to
+        query["date_from"] = from.to_s("%Y-%m-%d") if from
+        query["date_to"] = to.to_s("%Y-%m-%d") if to
       end
-      data = get("accounts/#{account_id}/transactions", class: JSON::Any)
+      data = get("accounts/#{account_id}/transactions", query: query, class: JSON::Any)
       begin
         data.dig("transactions", "booked").as_a
       rescue

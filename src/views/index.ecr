@@ -18,3 +18,10 @@ Hello <%= user.mail %>
   <% end %>
 </p>
 
+<% if user.nordigen_requisition_id && user.ynab_token_pair.usable? %>
+  <form action="/sync" method="get" hx-get="/sync" hx-target="#sync-result">
+    <input type="submit" value="Do sync">
+    <span class="htmx-indicator">Syncing...<img class="inline-spinner" src="/bars.svg"></span>
+    <p id="sync-result"></p>
+  </form>
+ <% end %>

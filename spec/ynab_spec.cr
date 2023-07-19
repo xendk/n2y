@@ -25,9 +25,9 @@ describe YNAB do
   end
 
   it "fetches tokens when provided an authorization code" do
-    WebMock.stub(:post, "https://app.ynab.com/oauth/token?client_id=client_id&client_secret=secret&redirect_uri=https%3A%2F%2Fexample.com%2F&grant_type=authorization_code&code=123").
-      with(body: "", headers: token_expected_headers).
-      to_return(body: "{\"access_token\":\"access_token\",\"token_type\":\"bearer\",\"expires_in\":7200,\"refresh_token\":\"refresh_token\"}")
+    WebMock.stub(:post, "https://app.ynab.com/oauth/token?client_id=client_id&client_secret=secret&redirect_uri=https%3A%2F%2Fexample.com%2F&grant_type=authorization_code&code=123")
+      .with(body: "", headers: token_expected_headers)
+      .to_return(body: "{\"access_token\":\"access_token\",\"token_type\":\"bearer\",\"expires_in\":7200,\"refresh_token\":\"refresh_token\"}")
 
     token_pair = TokenPair.new
     ynab = YNAB.new(token_pair)
@@ -61,9 +61,9 @@ describe YNAB do
   end
 
   it "gets accounts" do
-    WebMock.stub(:get, "https://api.ynab.com/v1/budgets?include_accounts=true").
-      with(headers: expected_headers).
-      to_return(body: "{\"data\":{\"budgets\":[{\"id\":\"1\",\"name\":\"Budget 1\",\"accounts\":[{\"id\":\"12\",\"name\":\"Checking\"},{\"id\":\"22\",\"name\":\"Savings\"}]},{\"id\":\"2\",\"name\":\"Budget 2\",\"accounts\":[{\"id\":\"21\",\"name\":\"Cayman\"}]}]}}")
+    WebMock.stub(:get, "https://api.ynab.com/v1/budgets?include_accounts=true")
+      .with(headers: expected_headers)
+      .to_return(body: "{\"data\":{\"budgets\":[{\"id\":\"1\",\"name\":\"Budget 1\",\"accounts\":[{\"id\":\"12\",\"name\":\"Checking\"},{\"id\":\"22\",\"name\":\"Savings\"}]},{\"id\":\"2\",\"name\":\"Budget 2\",\"accounts\":[{\"id\":\"21\",\"name\":\"Cayman\"}]}]}}")
 
     token_pair = TokenPair.new(access: "access_token", refresh: "refresh_token")
     ynab = YNAB.new(token_pair)
@@ -74,5 +74,35 @@ describe YNAB do
       YNAB::Account.new("21", "Cayman", "2", "Budget 2"),
     ]
     ynab.accounts.should eq(expected)
+  end
+
+  it "allows for pushing transactions" do
+    WebMock.stub(:post, "https://api.ynab.com/v1/budgets/123/transactions")
+      .with(body: "{\"transactions\":[{\"account_id\":\"132\",\"date\":\"2015-01-01\",\"amount\":1000,\"payee_name\":\"Payee\",\"import_id\":\"321\",\"cleared\":\"cleared\"},{\"account_id\":\"132\",\"date\":\"2015-01-02\",\"amount\":1000,\"payee_name\":\"Payee 2\",\"import_id\":\"231\",\"cleared\":\"cleared\"}]}", headers: expected_headers)
+      .to_return(body: "{\"data\":{\"duplicate_import_ids\":[\"321\"]}}")
+
+    token_pair = TokenPair.new(access: "access_token", refresh: "refresh_token")
+    ynab = YNAB.new(token_pair)
+
+    transactions = [
+      YNAB::Transaction.new(
+        budget_id: "123",
+        account_id: "132",
+        date: "2015-01-01",
+        amount: 1000,
+        payee_name: "Payee",
+        import_id: "321"
+      ),
+      YNAB::Transaction.new(
+        budget_id: "123",
+        account_id: "132",
+        date: "2015-01-02",
+        amount: 1000,
+        payee_name: "Payee 2",
+        import_id: "231"
+      ),
+    ]
+
+    ynab.push_transactions("123", transactions).should eq 1
   end
 end

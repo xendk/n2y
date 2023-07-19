@@ -10,6 +10,7 @@ module N2y::App
 end
 
 require "./app/*"
+require "./worker"
 
 add_context_storage_type(N2y::User)
 
@@ -86,8 +87,6 @@ module N2y
 
     post "/mapping/save" do |env|
       user = (env.get "user").as(N2y::User)
-      # accounts = env.params.body["mapping"].as(Array)
-
       mapping = {} of String => NamedTuple(id: String, budget_id: String)
 
       env.params.body.each do |key, value|
@@ -101,6 +100,12 @@ module N2y
       end
 
       user.mapping = mapping
+      user.id_seed = env.params.body["id_seed"].as(String)
+      begin
+        user.last_sync_time = Time.parse_utc(env.params.body["last_sync_time"].as(String), "%F")
+      rescue ex
+        # Simply ignore bad user data for the moment being.
+      end
       user.save
       env.redirect "/"
     end
@@ -110,6 +115,13 @@ module N2y
       user = (env.get "user").as(N2y::User)
       entries = user.log_entries
       render_page "log"
+    end
+
+    get "/sync" do |env|
+      title = "Sync"
+      user = (env.get "user").as(N2y::User)
+      worker = N2y::Worker.new user
+      worker.run.join("<br/>")
     end
 
     get "/privacy-policy" do |env|

@@ -29,6 +29,10 @@ module N2y
       end
     end
 
+    class TransactionsData < YNABObject
+      getter duplicate_import_ids : Array(String)
+    end
+
     class Response < YNABObject
     end
 
@@ -43,6 +47,10 @@ module N2y
 
     class BudgetsResponse < Response
       getter data : BudgetData
+    end
+
+    class TransactionsResponse < Response
+      getter data : TransactionsData
     end
 
     alias Responses = Response | Array(Response)

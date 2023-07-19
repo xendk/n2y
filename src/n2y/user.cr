@@ -18,7 +18,9 @@ module N2y
     getter? exists : Bool = false
     property nordigen_requisition_id : String?
     property ynab_refresh_token : String?
-    property mapping : String = ""
+    @mapping : String = "{}"
+    property last_sync_time : Time = Time.unix(0)
+    property id_seed = ""
 
     def self.get(mail : String)
       (@@users[mail] ||= User.new(mail)).tap &.load
@@ -33,25 +35,54 @@ module N2y
       @mail = mail
     end
 
+    def mapping
+      Hash(String, NamedTuple(id: String, budget_id: String)).from_json(@mapping)
+    end
+
+    def mapping=(mapping : Hash(String, NamedTuple(id: String, budget_id: String)))
+      @mapping = mapping.to_json
+    end
+
     def load
       @exists = false
-      row = settings.db.query_one? <<-SQL, mail, as: {String, String?, String?, String}
-SELECT mail, nordigen_requisition_id, ynab_refresh_token, mapping FROM users WHERE mail = ?
+      row = settings.db.query_one? <<-SQL, mail, as: {String, String?, String?, String, String, Int32}
+SELECT
+  mail,
+  nordigen_requisition_id,
+  ynab_refresh_token,
+  mapping,
+  id_seed,
+  last_sync_time
+FROM users WHERE mail = ?
 SQL
       if row
-        @mail, @nordigen_requisition_id, @ynab_refresh_token, @mapping = row
+        @mail, @nordigen_requisition_id, @ynab_refresh_token, @mapping, @id_seed = row
+        @last_sync_time = Time.unix(row[5])
         @exists = true
       end
     end
 
     def save
       if exists?
-        settings.db.exec <<-SQL, nordigen_requisition_id, ynab_refresh_token, mapping, mail
-UPDATE users SET nordigen_requisition_id = ?, ynab_refresh_token = ?, mapping = ? WHERE mail = ?
+        settings.db.exec <<-SQL, nordigen_requisition_id, ynab_refresh_token, @mapping, last_sync_time.to_unix, id_seed, mail
+UPDATE users SET
+  nordigen_requisition_id = ?,
+  ynab_refresh_token = ?,
+  mapping = ?,
+  last_sync_time = ?,
+  id_seed = ?
+WHERE mail = ?
 SQL
       else
-        settings.db.exec <<-SQL, mail, nordigen_requisition_id, ynab_refresh_token, mapping
-INSERT INTO users (mail, nordigen_requisition_id, ynab_refresh_token, mapping) VALUES (?, ?, ?, ?)
+        settings.db.exec <<-SQL, mail, nordigen_requisition_id, ynab_refresh_token, @mapping, last_sync_time.to_unix, id_seed
+INSERT INTO users (
+  mail,
+  nordigen_requisition_id,
+  ynab_refresh_token,
+  mapping,
+  last_sync_time,
+  id_seed
+) VALUES (?, ?, ?, ?, ?, ?)
 SQL
         @exists = true
       end

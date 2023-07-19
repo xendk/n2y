@@ -84,6 +84,15 @@ module N2y
       accounts
     end
 
+    # Push transactions to YNAB, and return the number of duplicated transactions.
+    def push_transactions(budget_id : String, transactions : Array(Transaction))
+      res = request("POST", "budgets/#{budget_id}/transactions", data: {
+                      "transactions" => transactions
+                    }, class: TransactionsResponse)
+
+      res.data.duplicate_import_ids.size
+    end
+
     # Make request to YNAB. Possibly refreshing tokens if needed.
     def request(method : String, path : String, *, query = nil, data = nil, class klass : Responses.class)
       path = URI.parse(path)

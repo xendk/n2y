@@ -3,6 +3,10 @@ body {
   background-color: white;
 }
 
+p {
+  margin: 1rem 0;
+}
+
 .menu {
   max-width: 800px;
   margin: auto;
@@ -63,9 +67,6 @@ input[type="submit"] {
   border-spacing: 1em;
 }
 
-.log-table tr {
-}
-
 .log-table .data {
   position: relative;
   text-align: center;
@@ -81,10 +82,20 @@ input[type="submit"] {
   height: auto;
 }
 
-.mapping-form label {
+.form-element {
+  margin-bottom: 1rem;
+}
+
+.form-element label {
   display: block;
 }
 
-.mapping-form .form-element {
-  margin-bottom: 1rem;
+.form-element .description {
+  margin-top: 0.3rem;
+  font-size: 0.8em;
+}
+.inline-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
 }
