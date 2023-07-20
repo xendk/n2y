@@ -34,7 +34,7 @@ module N2y
           # pass them through mapper
           transactions.each do |transaction|
             begin
-              ynab_transaction = N2y::Mapper.map(transaction, budget_id, @user.mapping[account.iban][:id])
+              ynab_transaction = N2y::Mapper.map(transaction, budget_id, @user.mapping[account.iban][:id], @user.id_seed)
               ynab_transactions[budget_id] << ynab_transaction if ynab_transaction
             rescue ex
               message = "Failed to map transaction #{transaction.dig?("transactionId") || "<unknown>" } with error #{ex.message}"
