@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="120" height="120" version="1.1" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+ <style>
+   @media (prefers-color-scheme: dark) {
+   .a { fill: #fff }
+   .b { fill: #000 }
+   }
+ </style> <circle class="a" cx="60" cy="60" r="60"/>
+ <g transform="matrix(7.7649 0 0 7.7649 -357.53 -350.72)" class="b" fill="#fff" style="inline-size:11.3031;white-space:pre" aria-label="N">
+  <path d="m50.099 57.195h1.644v-6.444l3.708 6.444h1.836v-8.868h-1.644v6.456l-3.672-6.456h-1.872z"/>
+ </g>
+</svg>
