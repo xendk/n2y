@@ -80,7 +80,8 @@ FileUtils.mkdir_p ENV["SESSION_DIR"] if ENV["SESSION_DIR"]?
 
 Kemal::Session.config do |config|
   config.cookie_name = "n2y_session_id"
-  config.samesite = Kemal.config.env == "production" ? HTTP::Cookie::SameSite::Strict : HTTP::Cookie::SameSite::Lax
+  config.samesite = HTTP::Cookie::SameSite::Lax
+  config.secure = Kemal.config.env == "production"
   config.secret = ENV["SESSION_SECRET"]? || raise "SESSION_SECRET not set"
   config.gc_interval = 2.minutes
   if ENV["SESSION_DIR"]?
