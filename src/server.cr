@@ -1,4 +1,8 @@
 require "dotenv"
+# Load .env file before requiring kemal, else it doesn't pick up
+# KEMAL_ENV from the file.
+Dotenv.load
+
 require "kemal"
 require "file_utils"
 require "multi_auth"
@@ -12,8 +16,6 @@ require "./n2y/database_log_backend"
 require "sqlite3"
 require "log"
 require "http/cookie"
-
-Dotenv.load
 
 raise "Please set GOOGLE_CLIENT_ID" unless ENV["GOOGLE_CLIENT_ID"]?
 raise "Please set GOOGLE_CLIENT_SECRET" unless ENV["GOOGLE_CLIENT_SECRET"]?
