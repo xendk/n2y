@@ -87,4 +87,11 @@ Kemal::Session.config do |config|
   end
 end
 
+# Systemd sends SIGTERM per default, so gracefully shut down.
+Signal::TERM.trap do
+  log "#{Kemal.config.app_name} closing down"
+  Kemal.stop
+  exit
+end
+
 require "./n2y/app"
