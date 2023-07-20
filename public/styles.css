@@ -90,10 +90,16 @@ input[type="submit"] {
   display: block;
 }
 
+.form-element.checkbox label {
+  display: inline;
+  padding-left: .25rem;
+}
+
 .form-element .description {
   margin-top: 0.3rem;
   font-size: 0.8em;
 }
+
 .inline-spinner {
   display: inline-block;
   width: 1rem;
