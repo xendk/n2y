@@ -78,7 +78,7 @@ module N2y::App::Auth
     accepted = env.params.body["accepted"]? && env.params.body["accepted"]?.as(String) == "1"
 
     if accepted && env.session.string?("user_id")
-      N2y::User.new(env.session.string("user_id")).save
+      N2y::User.get(env.session.string("user_id")).save
       env.redirect "/"
     else
       env.redirect "/auth/tos"
