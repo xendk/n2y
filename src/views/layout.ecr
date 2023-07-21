@@ -11,11 +11,15 @@
     <script src="/script.js"></script>
   </head>
   <body>
-    <ul class="menu" hx-boost="true">
-      <li><a href="/">Overview</a></li>
-      <li><a href="/mapping">Account mapping</a></li>
-      <li><a href="/log">Log</a></li>
-    </ul>
+    <% if env.session.string? "user_id" %>
+    <nav>
+      <ul class="menu" hx-boost="true">
+        <li><a href="/">Overview</a></li>
+        <li><a href="/mapping">Account mapping</a></li>
+        <li><a href="/log">Log</a></li>
+      </ul>
+    <nav>
+    <% end %>
     <div class="main-content">
       <%= content %>
     </div>

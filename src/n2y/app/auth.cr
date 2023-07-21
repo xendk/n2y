@@ -18,7 +18,6 @@ module N2y::App::Auth
     exclude ["/auth/tos"], "POST"
 
     def call(context)
-      context.session.string?("user_id")
       return call_next(context) if exclude_match?(context)
 
       if context.session.string?("user_id")
@@ -42,9 +41,12 @@ module N2y::App::Auth
 
   # Start authentication by redirecting to Google.
   get "/auth" do |env|
+    title = "About"
     redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/callback"
 
-    env.redirect(MultiAuth.make("google", redirect_uri).authorize_uri)
+    redirect_uri = MultiAuth.make("google", redirect_uri).authorize_uri
+
+    App.render_page "about"
   end
 
   # Return callback.
