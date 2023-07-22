@@ -47,7 +47,7 @@ module N2y
 
         ynab_transactions.each do |budget_id, transactions|
           count += transactions.size
-          duplicates += ynab.push_transactions(budget_id, transactions)
+          duplicates += ynab.push_transactions(budget_id, transactions) unless transactions.size.zero?
         end
 
         message = "Synced #{count} transactions, #{duplicates} already existed"
