@@ -2,6 +2,11 @@ body {
   font-family: 'Open Sans', sans-serif;
   background-color: white;
   line-height: 1.5;
+  --foreground: black;
+  --background: white;
+  --width: 800px;
+  margin: 0;
+  --main-margin: 1rem;
 }
 
 p {
@@ -9,36 +14,57 @@ p {
 }
 
 a {
-  color: black;
+  color: var(--foreground);
+}
+.main-content {
+  max-width: var(--width);
+  margin: auto;
+  margin-top: 3rem;
+  padding: var(--main-margin);
+}
+
+nav {
+  width: 100%;
+  padding: 2rem 0;
+  --foreground: white;
+  --background: black;
+  background-color: var(--background);
+}
+
+nav a {
+  text-decoration: none;
 }
 
 .menu {
-  max-width: 800px;
+  max-width: var(--width);
   margin: auto;
   list-style-type: none;
-  padding: 0;
+  padding: var(--main-margin);
   display: flex;
   justify-content: space-between;
 }
 
-.main-content {
-  max-width: 800px;
-  margin: auto;
-  margin-top: 3rem;
+@media (max-width: 400px) {
+  .menu {
+    display: block;
+  }
+
+  .menu li {
+    padding: 1rem;
+  }
 }
 
 input[type="submit"],
 a.button {
   font-family: 'Open Sans', sans-serif;
-  border: 2px solid black;
-  background-color: white;
+  border: 2px solid var(--foreground);
+  background-color: var(--background);
   padding: 4px 8px;
   font-size: 1em;
 }
 
 a.button {
   text-decoration: none;
-  color: black;
 }
 
 .bank-list {
@@ -57,7 +83,6 @@ a.button {
   gap: 4px;
   padding: 4px;
   text-decoration: none;
-  color: black;
 }
 
 .bank-list a:hover {
@@ -144,4 +169,5 @@ a.button {
   display: inline-block;
   width: 1rem;
   height: 1rem;
+  margin-left: 1rem;
 }
