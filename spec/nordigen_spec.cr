@@ -8,7 +8,6 @@ include N2y
 Nordigen.configure do |settings|
   settings.secret_id = "secret_id"
   settings.secret = "secret"
-  settings.reference_prefix = "test"
 end
 
 class Nordigen::DummyResponse < Nordigen::Response
@@ -139,9 +138,9 @@ describe Nordigen do
     nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
     WebMock.stub(:post, api_root + "requisitions/")
-      .with(body: "{\"redirect\":\"https://google.com\",\"institution_id\":\"MYBANK\",\"reference\":\"test-userreference\",\"user_language\":\"DA\"}", headers: expected_headers)
+      .with(body: "{\"redirect\":\"https://google.com\",\"institution_id\":\"MYBANK\",\"reference\":\"userreference\",\"user_language\":\"DA\"}", headers: expected_headers)
       # Not a full response, but what we care about.
-      .to_return(body: "{\"id\":\"123\",\"redirect\":\"https://google.com\",\"reference\":\"test-userreference\",\"user_language\":\"DA\",\"link\":\"https://magicurlatgocardless.com/something\"}")
+      .to_return(body: "{\"id\":\"123\",\"redirect\":\"https://google.com\",\"reference\":\"userreference\",\"user_language\":\"DA\",\"link\":\"https://magicurlatgocardless.com/something\"}")
 
     requisition_id, redirect_uri = nordigen.create_requisition("MYBANK", URI.parse("https://google.com"), "userreference")
 

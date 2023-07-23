@@ -12,7 +12,6 @@ module N2y
     Habitat.create do
       setting secret_id : String
       setting secret : String
-      setting reference_prefix : String
     end
 
     DENIED_MAPPING = {
@@ -65,7 +64,7 @@ module N2y
       data = {
         "redirect" => redirect_uri.to_s,
         "institution_id" => bank_id,
-        "reference" => "#{settings.reference_prefix}-#{reference}",
+        "reference" => reference,
         "user_language" => "DA",
       }
 

@@ -46,7 +46,6 @@ end
 N2y::Nordigen.configure do |settings|
   settings.secret_id = ENV["NORDIGEN_SECRET_ID"]? || raise "NORDIGEN_SECRET_ID not set"
   settings.secret = ENV["NORDIGEN_SECRET"]? || raise "NORDIGEN_SECRET not set"
-  settings.reference_prefix = "n2y-#{Kemal.config.env}"
 end
 
 N2y::YNAB.configure do |settings|

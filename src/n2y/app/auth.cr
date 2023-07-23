@@ -107,7 +107,15 @@ module N2y::App::Auth
     redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/nordigen/callback"
 
     user = (env.get "user").as(N2y::User)
-    requisition_id, url = N2y::Nordigen.new().create_requisition(bank_id, URI.parse(redirect_uri), user.mail)
+    # Generate reference from mail and current time in miliseconds.
+    # Current time in seconds ought to be enough (there's really not a
+    # use case for more than one authentication per second), but it's
+    # just one more char when base62 encoded, so why not.
+    requisition_id, url = N2y::Nordigen.new().create_requisition(
+                      bank_id,
+                      URI.parse(redirect_uri),
+                      "#{user.mail}-#{Time.utc.to_unix_ms.to_s(62)}"
+                    )
     env.session.string("nordigen_requisition_id", requisition_id)
 
     env.redirect url
