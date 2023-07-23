@@ -1,7 +1,9 @@
-Please select your bank from the list:
+<h1>Select bank</h1>
+
+<p>Please select your bank from the list:</p>
 
 <ul class="bank-list">
   <%- banks.each do |bank| -%>
-  <li><a href="/auth/nordigen/<%= bank.id %>"><img src="<%= bank.logo %>"> <%= bank.name %></a></li>
+  <li><a href="/auth/nordigen/<%= bank.id %>" class="outline" role="button"><img src="<%= bank.logo %>"> <%= bank.name %></a></li>
   <%- end -%>
 </ul>

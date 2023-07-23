@@ -118,7 +118,6 @@ module N2y
     end
 
     get "/sync" do |env|
-      title = "Sync"
       user = (env.get "user").as(N2y::User)
       worker = N2y::Worker.new user
       worker.run.join("<br/>")

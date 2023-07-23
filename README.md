@@ -60,7 +60,3 @@ Google and go from there.
 ## Contributors
 
 - [Thomas Fini Hansen](https://github.com/xendk) - creator and maintainer
-
-## Acknowledgements
-
-public/bars.svg [Copyright (c) 2014 Sam Herbert](https://github.com/SamHerbert/SVG-Loaders/blob/master/LICENSE.md) from https://github.com/SamHerbert/SVG-Loaders

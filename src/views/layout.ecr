@@ -6,22 +6,32 @@
     <link rel="icon" href="/favicon<%= Kemal.config.env == "production" ? "" : "-dev" %>.ico" sizes="32x32">
     <link rel="icon" href="/icon<%= Kemal.config.env == "production" ? "" : "-dev" %>.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/pico.min.css">
     <link rel="stylesheet" href="/styles.css">
     <script src="/htmx.min.js"></script>
     <script src="/script.js"></script>
   </head>
   <body>
     <% if env.session.string? "user_id" %>
-    <nav>
-      <ul class="menu" hx-boost="true">
-        <li><a href="/">Overview</a></li>
-        <li><a href="/mapping">Account mapping</a></li>
-        <li><a href="/log">Log</a></li>
-      </ul>
-    </nav>
+    <header class="container-fluid">
+      <nav>
+        <ul>
+          <li><stong>N2y</stong></li>
+        </ul>
+        <ul class="menu" hx-boost="true">
+          <li><a href="/">Overview</a></li>
+          <li><a href="/mapping">Account mapping</a></li>
+          <li><a href="/log">Log</a></li>
+        </ul>
+      </nav>
+    </header>
     <% end %>
-    <div class="main-content">
+    <main class="container">
       <%= content %>
-    </div>
+    </main>
+    <footer class="container">
+      <a href="/privacy-policy">Privacy policy</a>
+    </footer>
   </body>
 </html>

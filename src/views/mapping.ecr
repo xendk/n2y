@@ -3,9 +3,9 @@
   <div class="form-element">
     <label for="last_sync_time">Sync start date</label>
     <input id="last_sync_time" name="last_sync_time" type="text" value="<%= user.last_sync_time.to_s("%Y-%m-%d") %>">
-    <p class="description">
+    <small>
       The next sync fetches all transactions from this date up to today.
-    </p>
+    </small>
   </div>
 
   <p>
@@ -28,11 +28,11 @@
   <div class="form-element">
     <label for="id_seed">ID Seed</label>
     <input id="id_seed" name="id_seed" type="text" value="<%= user.id_seed %>">
-    <p class="description">
+    <small>
       Seed for the YNAB import_id generation. Should generally be
       empty, but can (and should) be set to any random value when
       testing.
-    </p>
+    </small>
   </div>
 
   <input type="submit" value="Save mapping">

@@ -1,27 +1,31 @@
+<h1>Log</h1>
 <p>
   This is the latest log entries for your account.
 </p>
 
-<table class="log-table">
-  <thead>
-    <tr>
-      <th class="head">Time</th>
-      <th class="head">Severity</th>
-      <th class="head">Message</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% entries.each do |entry| %>
-    <tr class="entry">
-      <td class="timestamp"><%= entry[:timestamp] %></td>
-      <td class="severity"><%= entry[:severity] %></td>
-      <td class="message"><%= entry[:message] %></td>
-    </tr>
-    <% if entry[:data] != "" %>
-    <tr>
-      <td colspan=3 class="data"><span class="data-toggle">[toggle JSON data]</span><pre><%= entry[:data] %></pre></td>
-    </tr>
-    <% end %>
-    <% end %>
-  </tbody>
-</table>
+<figure>
+  <table class="log-table">
+    <thead>
+      <tr>
+        <th class="head">Time</th>
+        <th class="head">Severity</th>
+        <th class="head">Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% entries.each do |entry| %>
+      <% has_data = entry[:data] != "" ? " has-data" : "" %>
+      <tr class="entry<%= has_data %>">
+        <td class="timestamp"><%= entry[:timestamp] %></td>
+        <td class="severity"><%= entry[:severity] %></td>
+        <td class="message"><%= entry[:message] %></td>
+      </tr>
+      <% if entry[:data] != "" %>
+      <tr>
+        <td colspan=3 class="data"><span class="data-toggle">[toggle JSON data]</span><pre><%= entry[:data] %></pre></td>
+      </tr>
+      <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</figure>
