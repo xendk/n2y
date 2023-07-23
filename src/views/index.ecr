@@ -1,27 +1,40 @@
 <h1>Hello <%= user.mail %></h1>
 
+<%- if !nordigen_connected -%>
 <section>
-<% if user.nordigen_requisition_id %>
-<a href="/auth/nordigen/select_bank" role="button">Reconnect bank accounts</a>
-<% else %>
-<p>N2y needs to be connected to your back account to fetch your transactions.</p>
-<a href="/auth/nordigen/select_bank" role="button">Connect bank accounts</a>
-<% end %>
+  <p>N2y needs to be connected to your back account to fetch your transactions.</p>
+  <a href="/auth/nordigen/select_bank" role="button">Connect bank accounts</a>
 </section>
+<%- end -%>
+
+<%- if !ynab_connected -%>
+<section>
+  <p>N2y needs to be connected with YNAB to push your transactions to it.</p>
+  <a href="/auth/ynab" role="button">Connect YNAB</a>
+</section>
+<%- end -%>
+
+
+<%- if nordigen_connected && ynab_connected -%>
+<%- if sync_time -%>
+<p>
+  Last transaction syncronization was at <%= sync_time %>
+</p>
+<%- end -%>
+
+<form action="/sync" method="get" hx-get="/sync" hx-target="#sync-result">
+  <input type="submit" value="Do sync">
+  <span class="htmx-indicator" aria-busy="true">Syncing...</span>
+  <p id="sync-result"></p>
+</form>
+<%- end -%>
 
 <section>
-<% if user.ynab_token_pair.usable? %>
-<a href="/auth/ynab" role="button">Reconnect YNAB</a>
-<% else %>
-<p>N2y needs to be connected with YNAB to push your transactions to it.</p>
-<a href="/auth/ynab" role="button">Connect YNAB</a>
-<% end %>
-</section>
+  <%- if nordigen_connected -%>
+  <a href="/auth/nordigen/select_bank" role="button">Reconnect bank accounts</a>
+  <%- end -%>
 
-<% if user.nordigen_requisition_id && user.ynab_token_pair.usable? %>
-  <form action="/sync" method="get" hx-get="/sync" hx-target="#sync-result">
-    <input type="submit" value="Do sync">
-    <span class="htmx-indicator" aria-busy="true">Syncing...</span>
-    <p id="sync-result"></p>
-  </form>
- <% end %>
+  <%- if ynab_connected -%>
+  <a href="/auth/ynab" role="button">Reconnect YNAB</a>
+  <%- end -%>
+</section>

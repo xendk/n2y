@@ -36,6 +36,9 @@ module N2y
     get "/" do |env|
       title = "Home"
       user = (env.get "user").as(N2y::User)
+      nordigen_connected : Bool = !!user.nordigen_requisition_id
+      ynab_connected : Bool = !!user.ynab_token_pair.usable?
+      sync_time : String? = user.last_sync_time ? user.last_sync_time.to_s : nil
       render_page "index"
     end
 
