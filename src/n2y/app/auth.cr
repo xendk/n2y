@@ -14,7 +14,7 @@ module N2y::App::Auth
       "/auth/tos",
       "/auth/logout",
       "/auth/error",
-      "/kaboom"
+      "/kaboom",
     ]
     exclude ["/auth/tos"], "POST"
 
@@ -113,11 +113,11 @@ module N2y::App::Auth
     # Current time in seconds ought to be enough (there's really not a
     # use case for more than one authentication per second), but it's
     # just one more char when base62 encoded, so why not.
-    requisition_id, url = N2y::Nordigen.new().create_requisition(
-                      bank_id,
-                      URI.parse(redirect_uri),
-                      "#{user.mail}-#{Time.utc.to_unix_ms.to_s(62)}"
-                    )
+    requisition_id, url = N2y::Nordigen.new.create_requisition(
+      bank_id,
+      URI.parse(redirect_uri),
+      "#{user.mail}-#{Time.utc.to_unix_ms.to_s(62)}"
+    )
     env.session.string("nordigen_requisition_id", requisition_id)
 
     env.redirect url
@@ -164,7 +164,6 @@ module N2y::App::Auth
     N2y::YNAB.new(user.ynab_token_pair).authorize(code, URI.parse("#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"))
     N2y::User::Log.info { "Authenticated with YNAB" }
 
-
     env.redirect "/"
   rescue ex
     # TODO: Something link `env.error_page = "/auth/ynab/error"` seems nicer.
@@ -178,5 +177,4 @@ module N2y::App::Auth
     content = "Error authenticating with YNAB. Please try again."
     render "src/views/layout.ecr"
   end
-
 end

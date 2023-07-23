@@ -16,10 +16,10 @@ module N2y
     @base_uri = URI.parse("https://api.ynab.com/v1/")
     @oauth_base_uri = URI.parse("https://app.ynab.com/oauth/")
 
-    @headers = HTTP::Headers {
-      "Accept" => "application/json",
+    @headers = HTTP::Headers{
+      "Accept"       => "application/json",
       "Content-Type" => "application/json",
-      "User-Agent" => "N2y",
+      "User-Agent"   => "N2y",
     }
 
     def initialize(@token_pair : N2y::TokenPair)
@@ -29,8 +29,8 @@ module N2y
     def redirect_uri(return_uri : URI)
       redirect_uri = @oauth_base_uri.resolve(URI.parse("authorize"))
       redirect_uri.query = URI::Params.encode({
-        "client_id" => settings.client_id,
-        "redirect_uri" => return_uri.to_s,
+        "client_id"     => settings.client_id,
+        "redirect_uri"  => return_uri.to_s,
         "response_type" => "code",
       })
       redirect_uri
@@ -43,15 +43,15 @@ module N2y
     # Authorize the code returned from the redirect.
     def authorize(code : String, return_uri : URI)
       do_refresh({
-        "grant_type" => "authorization_code",
+        "grant_type"   => "authorization_code",
         "redirect_uri" => return_uri.to_s,
-        "code" => code,
+        "code"         => code,
       }, "Failed to authorize")
     end
 
     protected def refresh_tokens
       do_refresh({
-        "grant_type" => "refresh_token",
+        "grant_type"    => "refresh_token",
         "refresh_token" => @token_pair.refresh,
       }, "Failed to refresh tokens")
     end
@@ -59,7 +59,7 @@ module N2y
     protected def do_refresh(params : Hash(String, String), error_message : String)
       uri = @oauth_base_uri.resolve(URI.parse("token"))
       uri.query = URI::Params.encode({
-        "client_id" => settings.client_id,
+        "client_id"     => settings.client_id,
         "client_secret" => settings.secret,
       }.merge(params))
       response = HTTP::Client.post(uri, headers: @headers, body: "")
@@ -87,8 +87,8 @@ module N2y
     # Push transactions to YNAB, and return the number of duplicated transactions.
     def push_transactions(budget_id : String, transactions : Array(Transaction))
       res = request("POST", "budgets/#{budget_id}/transactions", data: {
-                      "transactions" => transactions
-                    }, class: TransactionsResponse)
+        "transactions" => transactions,
+      }, class: TransactionsResponse)
 
       res.data.duplicate_import_ids.size
     end
@@ -103,7 +103,6 @@ module N2y
       headers = @headers.dup
 
       tries = 2
-      #response : HTTP::Client::Response
       while tries > 0
         begin
           headers["Authorization"] = "Bearer #{@token_pair.access}" if @token_pair.access?
@@ -134,8 +133,7 @@ module N2y
         rescue
           raise "Failed to parse error response: #{response.body}"
         end
-        raise response.status_code == 401 ? AuthException.new(error_response.error.detail) :
-                                                               error_response.error.detail
+        raise response.status_code == 401 ? AuthException.new(error_response.error.detail) : error_response.error.detail
       end
     end
   end

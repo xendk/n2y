@@ -69,7 +69,7 @@ if Kemal.config.env == "development"
   # ... but log to STDOUT too in development.
   Kemal.config.logger = Raven::Kemal::LogHandler.new(Kemal::LogHandler.new)
 else
-  Kemal.config.logger = Raven::Kemal::LogHandler.new()
+  Kemal.config.logger = Raven::Kemal::LogHandler.new
 end
 
 # Capture exceptions to Sentry.

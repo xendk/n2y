@@ -63,7 +63,7 @@ module N2y
 
       unless error
         begin
-           ynab_accounts = N2y::YNAB.new(user.ynab_token_pair).accounts
+          ynab_accounts = N2y::YNAB.new(user.ynab_token_pair).accounts
         rescue ex
           error = "Failed to fetch accounts from YNAB" + (ex.message || ex.class.to_s)
           N2y::User::Log.error { error }

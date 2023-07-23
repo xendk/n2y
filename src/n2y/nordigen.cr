@@ -16,15 +16,15 @@ module N2y
 
     DENIED_MAPPING = {
       "/api/v2/token/refresh/" => InvalidRefreshToken,
-      "/api/v2/token/new/" => InvalidCreds,
+      "/api/v2/token/new/"     => InvalidCreds,
     }
 
     def initialize(@token_pair : N2y::TokenPair = N2y::TokenPair.new)
       @base_uri = URI.parse("https://bankaccountdata.gocardless.com/api/v2/")
-      @headers = HTTP::Headers {
-        "Accept" => "application/json",
+      @headers = HTTP::Headers{
+        "Accept"       => "application/json",
         "Content-Type" => "application/json",
-        "User-Agent" => "N2y",
+        "User-Agent"   => "N2y",
       }
     end
 
@@ -62,10 +62,10 @@ module N2y
 
     def create_requisition(bank_id : String, redirect_uri : URI, reference : String) : {String, URI}
       data = {
-        "redirect" => redirect_uri.to_s,
+        "redirect"       => redirect_uri.to_s,
         "institution_id" => bank_id,
-        "reference" => reference,
-        "user_language" => "DA",
+        "reference"      => reference,
+        "user_language"  => "DA",
       }
 
       response = post("requisitions", data: data, class: CreateRequisitionResponse)
@@ -108,7 +108,7 @@ module N2y
         response = do_request("POST", URI.parse("token/refresh"), data: data, class: RefreshTokenResponse)
       else
         data = {
-          "secret_id" => settings.secret_id,
+          "secret_id"  => settings.secret_id,
           "secret_key" => settings.secret,
         }.to_json
 
