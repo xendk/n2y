@@ -8,6 +8,7 @@ module N2y::App::Auth
     exclude [
       "/favicon.ico",
       "/privacy-policy",
+      "/tos",
       "/auth",
       "/auth/callback",
       "/auth/tos",
@@ -69,10 +70,11 @@ module N2y::App::Auth
     end
   end
 
-  # Show terms of service.
+  # Accept terms of service page.
   get "/auth/tos" do |env|
     title = "Terms of Service"
-    N2y::App.render_page "tos"
+    tos = render "src/views/tos.ecr"
+    N2y::App.render_page "tos_page"
   end
 
   # Accept terms of service.

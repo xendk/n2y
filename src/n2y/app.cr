@@ -125,7 +125,13 @@ module N2y
 
     get "/privacy-policy" do |env|
       title = "Privacy Policy"
-      N2y::App.render_page "privacy-policy"
+      render_page "privacy-policy"
+    end
+
+    # Show terms of service.
+    get "/tos" do |env|
+      title = "Terms of Service"
+      render_page "tos"
     end
 
     # Throw an error for testing purposes.

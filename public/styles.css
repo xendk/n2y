@@ -41,6 +41,13 @@
 }
 
 /* Bit of custom stylings. */
+
+@media (min-width: 768px) {
+  input:not([type="checkbox"], [type="radio"]), select, textarea {
+    width: auto;
+  }
+}
+
 .log-table .has-data td {
   border-bottom: none;
 }
