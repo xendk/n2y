@@ -28,8 +28,12 @@ module N2y
 
           budget_id = @user.mapping[account.iban][:budget_id]
 
-          # load transactions since last, upto now
-          transactions = N2y::Nordigen.new.transactions(id, from: @user.last_sync_time, to: runtime)
+          # We're not sending a to date to Nordigen, as it seems that
+          # at least Danske Bank applies it to the "valueDate". On
+          # credit accounts (at least in Danske Bank), the valueDate
+          # is in the future (mostly the first bankday of next month),
+          # so transactions wouldn't show up until then.
+          transactions = N2y::Nordigen.new.transactions(id, from: @user.last_sync_time)
           ynab_transactions[budget_id] ||= [] of YNAB::Transaction
           # pass them through mapper
           transactions.each do |transaction|
