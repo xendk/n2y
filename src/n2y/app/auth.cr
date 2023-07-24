@@ -33,7 +33,13 @@ module N2y::App::Auth
           context.redirect "/auth/tos"
         end
       else
-        context.redirect "/auth"
+        # Tell HTMX that this redirect shouldn't be displayed inline.
+        if context.request.headers["HX-Request"]?
+          context.response.headers["HX-Location"] = "/auth"
+          ""
+        else
+          context.redirect "/auth"
+        end
       end
     end
   end
