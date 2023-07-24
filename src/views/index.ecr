@@ -29,12 +29,12 @@
 </form>
 <%- end -%>
 
-<section>
+<section class="reconnect">
   <%- if nordigen_connected -%>
-  <a href="/auth/nordigen/select_bank" role="button">Reconnect bank accounts</a>
+  <a href="/auth/nordigen/select_bank" class="secondary" role="button">Reconnect bank accounts</a>
   <%- end -%>
 
   <%- if ynab_connected -%>
-  <a href="/auth/ynab" role="button">Reconnect YNAB</a>
+  <a href="/auth/ynab" class="secondary" role="button">Reconnect YNAB</a>
   <%- end -%>
 </section>

@@ -85,3 +85,9 @@
   height: 32px;
   width: 32px;
 }
+
+.reconnect a {
+  /* Add a bit of bottom margin to buttons to avoid them running */
+  /* together on small screens. */
+  margin-bottom: 1rem;
+}
