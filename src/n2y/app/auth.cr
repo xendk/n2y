@@ -60,9 +60,14 @@ module N2y::App::Auth
   get "/auth/callback" do |env|
     redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/callback"
 
-    user = MultiAuth.make("google", redirect_uri).user(env.params.query)
+    mail : String?
 
-    mail = user.email
+    begin
+      user = MultiAuth.make("google", redirect_uri).user(env.params.query)
+      mail = user.email
+    rescue ex
+        log_exception(ex)
+    end
 
     if mail
       env.session.string("user_id", mail)
