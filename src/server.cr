@@ -59,7 +59,7 @@ Raven.configure do |config|
   # Set the environment name using `Kemal.config.env`, which uses `KEMAL_ENV` variable under-the-hood.
   config.current_environment = Kemal.config.env
   # Use tags as release name.
-  config.release = Raven.sys_command_compiled("git describe --exact --tags --always 2>/dev/null ||  git rev-parse HEAD")
+  config.release = Raven.sys_command_compiled("git describe --tags --always HEAD")
 end
 
 def log_exception(ex)
