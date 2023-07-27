@@ -97,4 +97,6 @@ Signal::TERM.trap do
   exit
 end
 
+Habitat.raise_if_missing_settings!
+
 require "./n2y/app"
