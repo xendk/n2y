@@ -1,4 +1,5 @@
 require "../n2y"
+require "yaml"
 require "sqlite3"
 require "habitat"
 require "log"
@@ -6,86 +7,95 @@ require "./token_pair"
 
 module N2y
   class User
+    include YAML::Serializable
+
     Log = ::Log.for(self)
 
     Habitat.create do
+      setting storage_path : String
       setting db : DB::Database
     end
 
     @@users = {} of String => User
 
     getter mail : String
-    getter? exists : Bool = false
     property nordigen_requisition_id : String?
     property ynab_refresh_token : String?
-    @mapping : String = "{}"
     property last_sync_time : Time = Time.unix(0)
+    property mapping = {} of String => NamedTuple(id: String, budget_id: String)
     property id_seed = ""
 
-    def self.get(mail : String)
-      (@@users[mail] ||= User.new(mail)).tap &.load
-    end
+    @[YAML::Field(ignore: true)]
+    @token_pair : TokenPair?
 
-    # Clear cache of users. Primarily for testing.
-    def self.clear_cache
+    def self.load_from_disk
       @@users = {} of String => User
+      Dir.glob(File.join(settings.storage_path, "*.yml")) do |path|
+        mail = File.basename(path, ".yml")
+        @@users[mail] = User.from_yaml(File.read(path))
+      end
     end
 
-    def initialize(mail : String)
-      @mail = mail
+    def self.save_to_disk
+      @@users.each_value do |user|
+        user.save
+      end
     end
 
-    def mapping
-      Hash(String, NamedTuple(id: String, budget_id: String)).from_json(@mapping)
+    def self.migrate
+      if Dir.glob(File.join(settings.storage_path, "*.yml")).empty?
+        Log.info { "Migrating from SQLite to YAML storage" }
+        users = [] of String
+        settings.db.query "SELECT mail FROM users" do |rs|
+          rs.each do
+            users << rs.read(String)
+          end
+        end
+        users.each do |mail|
+          user = User.get(mail)
+          user.load_from_db
+          user.save
+        end
+      end
     end
 
-    def mapping=(mapping : Hash(String, NamedTuple(id: String, budget_id: String)))
-      @mapping = mapping.to_json
+    def self.get(mail : String)
+      @@users[mail] ||= User.new(mail)
     end
 
-    def load
-      @exists = false
+    def initialize(@mail : String)
+    end
+
+    def path
+      File.join(settings.storage_path, "#{@mail}.yml")
+    end
+
+    def exists?
+      File.exists?(path)
+    end
+
+    def load_from_db
       row = settings.db.query_one? <<-SQL, mail, as: {String, String?, String?, String, String, Int32}
 SELECT
   mail,
   nordigen_requisition_id,
   ynab_refresh_token,
-  mapping,
   id_seed,
+  mapping,
   last_sync_time
 FROM users WHERE mail = ?
 SQL
       if row
-        @mail, @nordigen_requisition_id, @ynab_refresh_token, @mapping, @id_seed = row
+        @mail, @nordigen_requisition_id, @ynab_refresh_token, @id_seed = row
+        if row[4] != ""
+          @mapping = (Hash(String, NamedTuple(id: String, budget_id: String))).from_json(row[4])
+        end
         @last_sync_time = Time.unix(row[5])
-        @exists = true
       end
     end
 
     def save
-      if exists?
-        settings.db.exec <<-SQL, nordigen_requisition_id, ynab_refresh_token, @mapping, last_sync_time.to_unix, id_seed, mail
-UPDATE users SET
-  nordigen_requisition_id = ?,
-  ynab_refresh_token = ?,
-  mapping = ?,
-  last_sync_time = ?,
-  id_seed = ?
-WHERE mail = ?
-SQL
-      else
-        settings.db.exec <<-SQL, mail, nordigen_requisition_id, ynab_refresh_token, @mapping, last_sync_time.to_unix, id_seed
-INSERT INTO users (
-  mail,
-  nordigen_requisition_id,
-  ynab_refresh_token,
-  mapping,
-  last_sync_time,
-  id_seed
-) VALUES (?, ?, ?, ?, ?, ?)
-SQL
-        @exists = true
-      end
+      File.write(path, to_yaml)
     end
 
     def ynab_token_pair

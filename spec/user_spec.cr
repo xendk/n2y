@@ -1,19 +1,29 @@
 require "./spec_helper"
-require "../src/n2y/nordigen"
+require "file_utils"
 
 load_fixture("just-one-user")
 
 include N2y
 
+def with_storage(&)
+  tmp_dir = "/tmp/n2y-test/storage/user"
+  FileUtils.rm_rf tmp_dir
+  Dir.mkdir_p tmp_dir
+
+  User.settings.storage_path = "/tmp/n2y-test/storage/user"
+
+  yield
+end
+
 describe User do
   describe ".get" do
     it "returns a user for any string" do
-      User.get("any string").class.should eq(User)
+      User.get("any_string").class.should eq(User)
     end
 
     it "returns the same user on the same string" do
-      user1 = User.get("any string")
-      user2 = User.get("any string")
+      user1 = User.get("any_string")
+      user2 = User.get("any_string")
 
       user1.should be(user2)
     end
@@ -21,43 +31,87 @@ describe User do
 
   describe "#exists?" do
     it "returns true if the user exists" do
-      User.get("existing-user@gmail.com").exists?.should be_true
+      with_storage do
+        User.get("existing-user@gmail.com").save
+        User.get("existing-user@gmail.com").exists?.should be_true
+      end
     end
 
     it "returns false if the user does not exist" do
-      User.get("any other string").exists?.should be_false
+      with_storage do
+        User.get("any other string").exists?.should be_false
+      end
     end
   end
 
   it "should save the user" do
-    user = User.get("any string")
-    user.save
-    User.clear_cache
+    with_storage do
+      user = User.get("any_string")
+      File.exists?(user.path).should be_false
+      user.save
 
-    user = User.get("any string")
-    user.exists?.should be_true
+      File.exists?(user.path).should be_true
+      File.read(user.path).should eq("---\nmail: any_string\nlast_sync_time: 1970-01-01\nmapping: {}\nid_seed: \"\"\n")
+    end
+  end
+
+  it "should save all users to disk" do
+    with_storage do
+      user = User.get("any_string")
+      File.exists?(user.path).should be_false
+      User.save_to_disk
+
+      File.exists?(user.path).should be_true
+      File.read(user.path).should eq("---\nmail: any_string\nlast_sync_time: 1970-01-01\nmapping: {}\nid_seed: \"\"\n")
+    end
+  end
+
+  it "should load users from disk" do
+    with_storage do
+      File.write("/tmp/n2y-test/storage/user/load-user.yml", "---\nmail: load_user\nlast_sync_time: 1970-02-01\nmapping: {}\nid_seed: \"123\"\n")
+      User.load_from_disk
+      user = User.get("load-user")
+      user.last_sync_time.should eq(Time.utc(1970, 2, 1))
+      user.id_seed.should eq("123")
+    end
   end
 
   it "provides an YNAB TokenPair which saves on changes" do
-    user = User.get("tokentest")
-    user.ynab_token_pair.refresh?.should be_falsey
-    user.ynab_token_pair.refresh = "refresh"
+    with_storage do
+      user = User.get("tokentest")
+      user.ynab_token_pair.refresh?.should be_falsey
+      user.ynab_token_pair.refresh = "refresh"
 
-    User.clear_cache
-    user = User.get("tokentest")
-    user.ynab_token_pair.refresh.should eq("refresh")
+      User.load_from_disk
+      user = User.get("tokentest")
+      user.ynab_token_pair.refresh?.should eq("refresh")
+    end
   end
 
   it "stores account mapping" do
-    mapping = {} of String => NamedTuple(id: String, budget_id: String)
+    with_storage do
+      mapping = {} of String => NamedTuple(id: String, budget_id: String)
 
-    mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
-    mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
+      mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
+      mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
 
-    User.clear_cache
-    user = User.get("tokentest")
+      user = User.get("tokentest")
 
-    user.mapping = mapping
-    user.mapping.should eq(mapping)
+      user.mapping = mapping
+      user.mapping.should eq(mapping)
+      user.save
+
+      User.load_from_disk
+      user = User.get("tokentest")
+      user.mapping.should eq(mapping)
+    end
+  end
+
+  it "migrates from database" do
+    with_storage do
+      User.migrate
+      user = User.get("existing-user@gmail.com").exists?.should be_true
+      user = User.get("non-existing-user@gmail.com").exists?.should be_false
+    end
   end
 end

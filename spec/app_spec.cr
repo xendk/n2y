@@ -17,6 +17,8 @@ end
 # on the same database.
 load_fixture("just-one-user")
 
+Kemal.run
+
 describe N2y::App do
   it "redirects to /auth when unauthenticated" do
     get "/"

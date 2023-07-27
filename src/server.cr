@@ -27,9 +27,14 @@ MultiAuth.config(
 )
 db = DB.open ENV["N2Y_DB_URL"]? || N2y::DEFAULT_DB_URL
 
+Dir.mkdir_p "storage/users"
 N2y::User.configure do |settings|
+  settings.storage_path = "storage/users"
   settings.db = db
 end
+
+N2y::User.load_from_disk
+N2y::User.migrate
 
 N2y::DatabaseLogBackend.configure do |settings|
   settings.db = db
@@ -94,9 +99,20 @@ end
 Signal::TERM.trap do
   log "#{Kemal.config.app_name} closing down"
   Kemal.stop
+  N2y::User.save_to_disk
+  exit
+end
+
+Signal::INT.trap do
+  log "#{Kemal.config.app_name} is going to take a rest!" if Kemal.config.shutdown_message
+  Kemal.stop
+  N2y::User.save_to_disk
   exit
 end
 
 Habitat.raise_if_missing_settings!
 
 require "./n2y/app"
+
+# We've set up our own signal handling, so disable Kemal's.
+Kemal.run(trap_signal: false)

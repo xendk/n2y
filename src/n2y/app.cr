@@ -141,7 +141,5 @@ module N2y
     get "/kaboom" do |env|
       raise "Oh noooes! (Relax, this is just a test)"
     end
-
-    Kemal.run
   end
 end
