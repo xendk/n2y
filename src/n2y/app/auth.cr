@@ -70,7 +70,7 @@ module N2y::App::Auth
     end
 
     if mail
-      env.session.string("user_id", mail)
+      env.session.string("user_id", mail.downcase.strip)
 
       N2y::User::Log.context.set user_id: env.session.string("user_id")
       N2y::User::Log.info { "Logged in" }
