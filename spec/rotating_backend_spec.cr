@@ -43,7 +43,7 @@ describe RotatingBackend do
         RotatingBackend.new().write(entry)
 
         File.exists?("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq true
-        File.read("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq "2023-05-17T18:35:27.000000Z\ttest\tERROR\tlog message\t{}\n2023-05-17T18:35:35.000000Z\ttest\tERROR\tsecond log message\n"
+        File.read("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq "2023-05-17T18:35:27.000000Z\tERROR\tlog message\t{}\n2023-05-17T18:35:35.000000Z\tERROR\tsecond log message\n"
       end
     end
   end
@@ -77,8 +77,8 @@ describe RotatingBackend do
 
         File.exists?("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq true
         File.exists?("/tmp/n2y-test/storage/logs/test/2023-05-18.log").should eq true
-        File.read("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq "2023-05-17T18:35:27.000000Z\ttest\tERROR\tlog message\t{}\n"
-        File.read("/tmp/n2y-test/storage/logs/test/2023-05-18.log").should eq "2023-05-18T18:35:35.000000Z\ttest\tERROR\tsecond log message\n"
+        File.read("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq "2023-05-17T18:35:27.000000Z\tERROR\tlog message\t{}\n"
+        File.read("/tmp/n2y-test/storage/logs/test/2023-05-18.log").should eq "2023-05-18T18:35:35.000000Z\tERROR\tsecond log message\n"
       end
     end
   end

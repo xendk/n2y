@@ -15,8 +15,6 @@ module N2y
       def self.format(entry : Log::Entry, io : IO)
         entry.timestamp.to_rfc3339(io, fraction_digits: 6)
         io << "\t"
-        io << entry.context[:user_id].as_s
-        io << "\t"
         io << entry.severity.label
         io << "\t"
         io << entry.message.gsub('\t', ' ')
@@ -33,6 +31,8 @@ module N2y
 
     def initialize()
       @mutex = Mutex.new(:unchecked)
+      # Async segfaults, see https://github.com/crystal-lang/crystal/issues/13721
+      super(dispatch_mode: Log::DispatchMode::Sync)
     end
 
     def write(entry : Log::Entry)

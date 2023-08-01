@@ -116,7 +116,27 @@ module N2y
     get "/log" do |env|
       title = "Log"
       user = (env.get "user").as(N2y::User)
-      entries = user.log_entries
+      log_dir = File.join(N2y::RotatingBackend.settings.storage_path, user.mail)
+
+      entries = [] of {timestamp: String, severity: String, message: String, data: String?}
+
+      if File.exists? log_dir
+        Dir[File.join(log_dir, "*.log")].sort.each do |log_file|
+          File.open(File.join(log_file), "r") do |file|
+            file.each_line do |line|
+              line = line.chomp
+              next if line.empty?
+              parts = line.split('\t', 4)
+              next if parts.size < 3
+              time, severity, message = parts
+              data = parts[3]?
+              entries << {timestamp: time, severity: severity, message: message, data: data}
+            end
+          end
+        end
+      end
+
+      entries.reverse!
       render_page "log"
     end
 

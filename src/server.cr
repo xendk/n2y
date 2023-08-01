@@ -13,6 +13,7 @@ require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
 require "./n2y/database_log_backend"
+require "./n2y/rotating_backend"
 require "sqlite3"
 require "log"
 require "http/cookie"
@@ -40,12 +41,17 @@ N2y::DatabaseLogBackend.configure do |settings|
   settings.db = db
 end
 
+Dir.mkdir_p "storage/logs"
+N2y::RotatingBackend.configure do |settings|
+  settings.storage_path = "storage/logs"
+end
+
 Log.setup do |c|
   # Capture all logs if DEBUG env variable is set.
   if ENV["DEBUG"]?
     c.bind "*", :trace, Log::IOBackend.new(STDOUT)
   end
-  c.bind "n2y.user", :debug, N2y::DatabaseLogBackend.new
+  c.bind "n2y.user", :debug, N2y::RotatingBackend.new
 end
 
 N2y::Nordigen.configure do |settings|
