@@ -12,7 +12,6 @@ require "./n2y"
 require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
-require "./n2y/database_log_backend"
 require "./n2y/rotating_backend"
 require "sqlite3"
 require "log"
@@ -36,10 +35,6 @@ end
 
 N2y::User.load_from_disk
 N2y::User.migrate
-
-N2y::DatabaseLogBackend.configure do |settings|
-  settings.db = db
-end
 
 Dir.mkdir_p "storage/logs"
 N2y::RotatingBackend.configure do |settings|
