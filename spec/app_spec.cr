@@ -13,10 +13,6 @@ Kemal::Session.config do |config|
   config.gc_interval = 2.minutes # 2 minutes
 end
 
-# Use the same fixture for all the tests. They should be safe to run
-# on the same database.
-load_fixture("just-one-user")
-
 Kemal.run
 
 describe N2y::App do

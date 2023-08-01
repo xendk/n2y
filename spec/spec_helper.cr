@@ -19,6 +19,15 @@ end
 
 N2y::User.configure do |settings|
   settings.db = DB.open DB_URL
+  settings.storage_path = "/tmp/n2y-test/storage/user"
+end
+
+def clear_users
+  tmp_dir = "/tmp/n2y-test/storage/user"
+  FileUtils.rm_rf tmp_dir
+  Dir.mkdir_p tmp_dir
+
+  User.load_from_disk
 end
 
 # Use another port for testing.
