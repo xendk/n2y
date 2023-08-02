@@ -5,10 +5,6 @@ version: '3'
 interval: '500ms'
 set: [pipefail]
 
-vars:
-  SSH_HOST: root@n2y.xen.dk
-  INSTALL_PATH: /root/n2y
-
 tasks:
   spec:
     desc: Run specs
