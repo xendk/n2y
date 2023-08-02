@@ -13,12 +13,6 @@ Compile the server and database migration tool:
 $ shards build
 ```
 
-Run migrations to create a database:
-
-``` shell
-$ ./bin/micrate up
-```
-
 Create an `.env` file by copying `.env.example` and filling in the
 relevant values.
 
