@@ -1,6 +1,5 @@
 require "../n2y"
 require "yaml"
-require "sqlite3"
 require "habitat"
 require "log"
 require "./token_pair"
@@ -13,7 +12,6 @@ module N2y
 
     Habitat.create do
       setting storage_path : String
-      setting db : DB::Database
     end
 
     @@users = {} of String => User
@@ -42,23 +40,6 @@ module N2y
       end
     end
 
-    def self.migrate
-      if Dir.glob(File.join(settings.storage_path, "*.yml")).empty?
-        Log.info { "Migrating from SQLite to YAML storage" }
-        users = [] of String
-        settings.db.query "SELECT mail FROM users" do |rs|
-          rs.each do
-            users << rs.read(String)
-          end
-        end
-        users.each do |mail|
-          user = User.get(mail)
-          user.load_from_db
-          user.save
-        end
-      end
-    end
-
     def self.get(mail : String)
       @@users[mail] ||= User.new(mail)
     end
@@ -74,26 +55,6 @@ module N2y
       File.exists?(path)
     end
 
-    def load_from_db
-      row = settings.db.query_one? <<-SQL, mail, as: {String, String?, String?, String, String, Int32}
-SELECT
-  mail,
-  nordigen_requisition_id,
-  ynab_refresh_token,
-  id_seed,
-  mapping,
-  last_sync_time
-FROM users WHERE mail = ?
-SQL
-      if row
-        @mail, @nordigen_requisition_id, @ynab_refresh_token, @id_seed = row
-        if row[4] != ""
-          @mapping = (Hash(String, NamedTuple(id: String, budget_id: String))).from_json(row[4])
-        end
-        @last_sync_time = Time.unix(row[5])
-      end
-    end
-
     def save
       File.write(path, to_yaml)
     end
@@ -105,23 +66,6 @@ SQL
           save
         end
       end
-    end
-
-    # Get log entries for this user.
-    def log_entries
-      entries = [] of NamedTuple(timestamp: String, severity: String, message: String, data: String)
-      settings.db.query "select timestamp, severity, message, data from log where mail = ? order by timestamp desc", @mail do |rs|
-        rs.each do
-          timestamp = Time.unix(rs.read(Int32)).to_rfc3339
-          severity = rs.read(String)
-          message = rs.read(String)
-          data = rs.read(String)
-
-          entries << {timestamp: timestamp, severity: severity, message: message, data: data}
-        end
-      end
-
-      entries
     end
   end
 end

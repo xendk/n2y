@@ -43,7 +43,7 @@ module MultiAuth
 end
 
 # Run authentication and returns the headers to keep the session.
-def authenticate(email = "existing-user@gmail.com")
+def authenticate(email)
   MultiAuth.email = email
   # Auth endpoints needs the host header to construct the callback url.
   get "/auth/callback", HTTP::Headers{"Host" => "localhost"}

@@ -13,7 +13,6 @@ require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
 require "./n2y/rotating_backend"
-require "sqlite3"
 require "log"
 require "http/cookie"
 
@@ -25,16 +24,13 @@ MultiAuth.config(
   ENV["GOOGLE_CLIENT_ID"],
   ENV["GOOGLE_CLIENT_SECRET"]
 )
-db = DB.open ENV["N2Y_DB_URL"]? || N2y::DEFAULT_DB_URL
 
 Dir.mkdir_p "storage/users"
 N2y::User.configure do |settings|
   settings.storage_path = "storage/users"
-  settings.db = db
 end
 
 N2y::User.load_from_disk
-N2y::User.migrate
 
 Dir.mkdir_p "storage/logs"
 N2y::RotatingBackend.configure do |settings|

@@ -4,4 +4,3 @@
 /.shards/
 *.dwarf
 .env
-/db/n2y.db

@@ -24,7 +24,8 @@ describe N2y::App do
   end
 
   it "renders front page when authenticated" do
-    get "/", authenticate
+    N2y::User.get("existing-user@gmail.com").save
+    get "/", authenticate("existing-user@gmail.com")
 
     response.status_code.should eq 200
     response.body.should contain "N2Y"

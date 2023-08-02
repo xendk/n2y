@@ -29,10 +29,6 @@ dependencies:
     github: Sija/raven.cr
   dotenv:
     github: drum445/dotenv
-  micrate:
-    github: amberframework/micrate
-  sqlite3:
-    github: crystal-lang/crystal-sqlite3
   habitat:
     github: luckyframework/habitat
 

@@ -1,8 +1,6 @@
 require "./spec_helper"
 require "file_utils"
 
-load_fixture("just-one-user")
-
 include N2y
 
 describe User do
@@ -95,13 +93,5 @@ describe User do
     User.load_from_disk
     user = User.get("tokentest")
     user.mapping.should eq(mapping)
-  end
-
-  it "migrates from database" do
-    clear_users
-
-    User.migrate
-    user = User.get("existing-user@gmail.com").exists?.should be_true
-    user = User.get("non-existing-user@gmail.com").exists?.should be_false
   end
 end
