@@ -5,3 +5,5 @@
 /storage/
 *.dwarf
 .env
+.task
+Taskfile.yml

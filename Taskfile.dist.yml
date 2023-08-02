@@ -1,0 +1,61 @@
+# https://taskfile.dev
+
+version: '3'
+
+interval: '500ms'
+set: [pipefail]
+
+vars:
+  SSH_HOST: root@n2y.xen.dk
+  INSTALL_PATH: /root/n2y
+
+tasks:
+  spec:
+    desc: Run specs
+    aliases: [test]
+    cmds:
+      - KEMAL_ENV=test crystal spec -v {{ .CLI_ARGS }}
+    sources:
+      - src/**/*.cr
+      - src/**/*.ecr
+      - spec/**/*.cr
+    method: timestamp
+
+  clean:
+    desc: Clean build
+    cmd: rm -rf dist
+
+  dist:
+    desc: Build distribution
+    deps: [dist-bin, dist-assets]
+
+  dist-dir:
+    internal: true
+    run: once
+    cmds:
+      - mkdir -p dist/bin
+    generates:
+      - dist
+    status:
+      - test -d dist/bin
+
+  dist-bin:
+    internal: true
+    deps: [dist-dir]
+    cmds:
+      - crystal build src/server.cr -o dist/bin/server --release
+    sources:
+      - src/**/*
+      - lib/**/*
+    generates:
+      - dist/bin/server
+
+  dist-assets:
+    internal: true
+    deps: [dist-dir]
+    cmds:
+      - cp -r public dist/
+    sources:
+      - public/**/*
+    generates:
+      - dist/public/**/*
