@@ -5,13 +5,28 @@ importing bank data into [YNAB](https://www.youneedabudget.com/). It
 supports importing from [banks supported by
 Nordigen](https://nordigen.com/en/coverage/).
 
-## Installation
+## Bulid requirements
 
-Compile the server and database migration tool:
+* [Crystal Language](https://crystal-lang.org/) compiler
+* [Task](https://taskfile.dev/) (optional but recommended)
+
+## Compiling
+
+To quickly compile the server for testing/development, run:
 
 ``` shell
 $ shards build
 ```
+
+The same can be accomplished with `task build`, or just `task`. The
+[taskfile](./Taskfile.dist.yml) contains other useful task:
+
+* `task spec`: Bun spec tests. Add `-- <file>` to run specific spec
+  file.
+* `task dist`: Build release binary into `dist` along with auxiliary
+  files needed (CSS, JavaScript, images, etc).
+
+## Installation
 
 Create an `.env` file by copying `.env.example` and filling in the
 relevant values.

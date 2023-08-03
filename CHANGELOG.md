@@ -9,7 +9,11 @@ changes).
 
 ## 1.2.1 - Unreleased
 ### Added
-- CHANGELOG.md file 
+- CHANGELOG.md file.
+- `build` and `release` targets to taskfile.
+
+### Removed
+- Old test code and shard targets.
 
 ## 1.2.0 - 2023-08-02
 ### Added
