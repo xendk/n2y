@@ -6,6 +6,14 @@ interval: '500ms'
 set: [pipefail]
 
 tasks:
+  default:
+    cmds:
+      - task: build
+
+  build:
+    desc: Build server
+    cmd: shards build
+
   spec:
     desc: Run specs
     aliases: [test]
