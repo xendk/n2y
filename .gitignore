@@ -3,6 +3,8 @@
 /bin/
 /.shards/
 /storage/
+/dist/
+/infra/
 *.dwarf
 .env
 .task
