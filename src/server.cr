@@ -8,13 +8,14 @@ require "file_utils"
 require "multi_auth"
 require "raven"
 require "raven/integrations/kemal"
+require "log"
+require "http/cookie"
 require "./n2y"
 require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
 require "./n2y/rotating_backend"
-require "log"
-require "http/cookie"
+require "./n2y/app"
 
 raise "Please set GOOGLE_CLIENT_ID" unless ENV["GOOGLE_CLIENT_ID"]?
 raise "Please set GOOGLE_CLIENT_SECRET" unless ENV["GOOGLE_CLIENT_SECRET"]?
@@ -108,8 +109,6 @@ Signal::INT.trap do
 end
 
 Habitat.raise_if_missing_settings!
-
-require "./n2y/app"
 
 # We've set up our own signal handling, so disable Kemal's.
 Kemal.run(trap_signal: false)
