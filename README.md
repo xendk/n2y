@@ -21,7 +21,7 @@ $ shards build
 The same can be accomplished with `task build`, or just `task`. The
 [taskfile](./Taskfile.dist.yml) contains other useful task:
 
-* `task spec`: Bun spec tests. Add `-- <file>` to run specific spec
+* `task spec`: Run spec tests. Add `-- <file>` to run specific spec
   file.
 * `task dist`: Build release binary into `dist` along with auxiliary
   files needed (CSS, JavaScript, images, etc).
