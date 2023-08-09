@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major relases significant
 changes).
 
-## 1.3.0 - Unreleased
+## 1.3.1 - Unreleased
+
+## 1.3.0 - 2023-08-09
 ### Added
 - CHANGELOG.md file.
 - `build` and `release` targets to taskfile.
