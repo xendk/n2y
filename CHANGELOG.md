@@ -16,6 +16,7 @@ changes).
 
 ### Changed
 - Let the session live longer, but require login at least once a week.
+  Closes #4.
 - Make release building even more automated.
 
 ### Removed
@@ -34,8 +35,8 @@ changes).
 
 ### Changed
 - Store users in yaml files instead of database and migrate existing
-  users.
-- Store logs in files rather than database.
+  users. Closes #3.
+- Store logs in files rather than database. Closes #3.
 
 ### Fixed
 - Make Habitat check for missing configuration and error out.
