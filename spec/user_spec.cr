@@ -40,7 +40,8 @@ describe User do
     user.save
 
     File.exists?(user.path).should be_true
-    File.read(user.path).should eq("---\nmail: any_string\nlast_sync_time: 1970-01-01\nmapping: {}\nid_seed: \"\"\n")
+    data = YAML.parse File.read(user.path)
+    data["mail"].should eq("any_string")
   end
 
   it "should save all users to disk" do
@@ -51,7 +52,8 @@ describe User do
     User.save_to_disk
 
     File.exists?(user.path).should be_true
-    File.read(user.path).should eq("---\nmail: any_string\nlast_sync_time: 1970-01-01\nmapping: {}\nid_seed: \"\"\n")
+    data = YAML.parse File.read(user.path)
+    data["mail"].should eq("any_string")
   end
 
   it "should load users from disk" do
@@ -77,21 +79,56 @@ describe User do
     user.ynab_token_pair.refresh?.should eq("refresh")
   end
 
-  it "stores account mapping" do
-    clear_users
-    mapping = {} of String => NamedTuple(id: String, budget_id: String)
+  context "it stores" do
+    it "account mapping" do
+      clear_users
+      mapping = {} of String => NamedTuple(id: String, budget_id: String)
 
-    mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
-    mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
+      mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
+      mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
 
-    user = User.get("tokentest")
+      user = User.get("mapping")
 
-    user.mapping = mapping
-    user.mapping.should eq(mapping)
-    user.save
+      user.mapping = mapping
+      user.mapping.should eq(mapping)
+      user.save
 
-    User.load_from_disk
-    user = User.get("tokentest")
-    user.mapping.should eq(mapping)
+      User.load_from_disk
+      user = User.get("mapping")
+      user.mapping.should eq(mapping)
+    end
+
+    it "last_sync_time" do
+      clear_users
+
+      user = User.get("last-sync-time")
+      user.save
+
+      User.load_from_disk
+      # Start of epoch is default.
+      User.get("last-sync-time").last_sync_time.should eq(Time.utc(1970, 1, 1))
+
+      user.last_sync_time = Time.utc(1996, 2, 1)
+      user.save
+
+      User.load_from_disk
+      User.get("last-sync-time").last_sync_time.should eq(Time.utc(1996, 2, 1))
+    end
+
+    it "id_seed" do
+      clear_users
+
+      user = User.get("id-seed")
+      user.save
+
+      User.load_from_disk
+      User.get("id-seed").id_seed.should eq("")
+
+      user.id_seed = "the-seed"
+      user.save
+
+      User.load_from_disk
+      User.get("id-seed").id_seed.should eq("the-seed")
+    end
   end
 end
