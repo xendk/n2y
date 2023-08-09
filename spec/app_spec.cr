@@ -3,9 +3,11 @@ require "spec-kemal"
 require "../src/n2y/app"
 require "../src/n2y/nordigen"
 require "../src/n2y/ynab"
+require "../src/n2y/rotating_backend"
 # Use a mock of MultiAuth that'll always return a user when we hit
 # /auth/callback.
 require "./mock-multi_auth"
+require "timecop"
 
 Kemal::Session.config do |config|
   config.cookie_name = "n2y_session_id"
@@ -24,11 +26,38 @@ describe N2y::App do
   end
 
   it "renders front page when authenticated" do
-    N2y::User.get("existing-user@gmail.com").save
+    clear_users
+    user = N2y::User.get("existing-user@gmail.com")
+    user.tos_accepted_time = Time.utc
+    user.save
+
     get "/", authenticate("existing-user@gmail.com")
 
     response.status_code.should eq 200
     response.body.should contain "N2Y"
+  end
+
+  it "times out sessions after a while" do
+    clear_users
+    user = N2y::User.get("existing-user@gmail.com")
+    user.tos_accepted_time = Time.utc
+    user.save
+    time = Time.local
+
+    Timecop.travel(time) do
+      N2y::User.get("existing-user@gmail.com").save
+      headers = authenticate("existing-user@gmail.com")
+      get "/", headers
+
+      response.status_code.should eq 200
+      response.body.should contain "N2Y"
+
+      Timecop.travel(time + 8.days)
+      get "/", headers
+
+      response.status_code.should eq 302
+      response.headers["Location"].should eq "/auth"
+    end
   end
 
   it "presents new users with the Terms of Service page" do

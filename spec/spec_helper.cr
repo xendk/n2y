@@ -15,7 +15,7 @@ def clear_users
   FileUtils.rm_rf tmp_dir
   Dir.mkdir_p tmp_dir
 
-  User.load_from_disk
+  N2y::User.load_from_disk
 end
 
 # Use another port for testing.

@@ -7,10 +7,13 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major relases significant
 changes).
 
-## 1.2.1 - Unreleased
+## 1.3.0 - Unreleased
 ### Added
 - CHANGELOG.md file.
 - `build` and `release` targets to taskfile.
+
+### Changed
+- Let the session live longer, but require login at least once a week.
 
 ### Removed
 - Old test code and shard targets.

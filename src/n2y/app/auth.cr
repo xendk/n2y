@@ -1,11 +1,6 @@
 # Authentication related code for the web app.
 module N2y::App::Auth
-  # Kemal middleware for authentication.
-  #
-  # Redirects to login page if user is not authenticated, and new
-  # users to terms of service.
-  class Handler < Kemal::Handler
-    exclude [
+  excluded_get = [
       "/favicon.ico",
       "/privacy-policy",
       "/tos",
@@ -15,36 +10,88 @@ module N2y::App::Auth
       "/auth/logout",
       "/auth/error",
       "/kaboom",
-    ]
-    exclude ["/auth/tos"], "POST"
+  ]
+  excluded_post = [
+      "/auth/tos",
+  ]
+  # Kemal middleware for authentication.
+  #
+  # Redirects to login page if user is not authenticated, and sets up
+  # user logging.
+  class AuthHandler < Kemal::Handler
+    exclude excluded_get
+    exclude excluded_post, "POST"
 
-    def call(context)
-      return call_next(context) if exclude_match?(context)
+    def call(env)
+      return call_next(env) if exclude_match?(env)
 
-      if context.session.string?("user_id")
-        user = N2y::User.get(context.session.string("user_id"))
-        if user.exists?
-          context.set "user", user
-          N2y::User::Log.context.set user_id: context.session.string("user_id")
-          call_next(context)
-        else
-          # New users have to accept the terms of service. We don't
-          # add them to the user list until they do.
-          context.redirect "/auth/tos"
-        end
+      if env.session.string?("user_id")
+        user = N2y::User.get(env.session.string("user_id"))
+
+        env.set "user", user
+        N2y::User::Log.context.set user_id: env.session.string("user_id")
+        call_next(env)
       else
         # Tell HTMX that this redirect shouldn't be displayed inline.
-        if context.request.headers["HX-Request"]?
-          context.response.headers["HX-Location"] = "/auth"
+        if env.request.headers["HX-Request"]?
+          env.response.headers["HX-Location"] = "/auth"
           ""
         else
-          context.redirect "/auth"
+          env.redirect "/auth"
         end
       end
     end
   end
 
-  Kemal.config.add_handler N2y::App::Auth::Handler.new
+  # Logout users after a week. At login is the only time we get
+  # Googles word that this browser is actually the user, so we'll
+  # check up on it occasionally.
+  class LoginTimeoutHandler < Kemal::Handler
+    exclude excluded_get
+    exclude excluded_post, "POST"
+
+    def call(env)
+      return call_next(env) if exclude_match?(env)
+
+      user = (env.get "user").as(N2y::User)
+
+      if (user.login_time + 7.days) < Time.utc
+        if env.request.headers["HX-Request"]?
+          env.response.headers["HX-Location"] = "/auth"
+          ""
+        else
+          env.redirect "/auth"
+        end
+      else
+        call_next(env)
+      end
+    end
+  end
+
+  # Redirect new users to terms of service.
+  class TosHandler < Kemal::Handler
+    exclude excluded_get
+    exclude excluded_post, "POST"
+
+    def call(env)
+      return call_next(env) if exclude_match?(env)
+
+      user = (env.get "user").as(N2y::User)
+
+      # if (user.last_login_time + 7.days) < Time.utc
+      # end
+
+      if user.tos_accepted_time
+        call_next(env)
+      else
+        env.redirect "/auth/tos"
+      end
+    end
+  end
+
+  Kemal.config.add_handler N2y::App::Auth::AuthHandler.new
+  Kemal.config.add_handler N2y::App::Auth::LoginTimeoutHandler.new
+  Kemal.config.add_handler N2y::App::Auth::TosHandler.new
 
   # Start authentication by redirecting to Google.
   get "/auth" do |env|
@@ -72,6 +119,9 @@ module N2y::App::Auth
     if mail
       env.session.string("user_id", mail.downcase.strip)
 
+      user = N2y::User.get(env.session.string("user_id"))
+      user.login_time = Time.utc
+
       N2y::User::Log.context.set user_id: env.session.string("user_id")
       N2y::User::Log.info { "Logged in" }
 
@@ -93,7 +143,9 @@ module N2y::App::Auth
     accepted = env.params.body["accepted"]? && env.params.body["accepted"]?.as(String) == "1"
 
     if accepted && env.session.string?("user_id")
-      N2y::User.get(env.session.string("user_id")).save
+      user = N2y::User.get(env.session.string("user_id"))
+      user.tos_accepted_time = Time.utc
+      user.save
       env.redirect "/"
     else
       env.redirect "/auth/tos"

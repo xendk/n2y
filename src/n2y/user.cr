@@ -17,6 +17,8 @@ module N2y
     @@users = {} of String => User
 
     getter mail : String
+    property login_time : Time = Time.unix(0)
+    property tos_accepted_time : Time?
     property nordigen_requisition_id : String?
     property ynab_refresh_token : String?
     property last_sync_time : Time = Time.unix(0)

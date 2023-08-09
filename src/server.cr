@@ -83,6 +83,9 @@ Kemal.config.add_handler Raven::Kemal::ExceptionHandler.new
 FileUtils.mkdir_p ENV["SESSION_DIR"] if ENV["SESSION_DIR"]?
 
 Kemal::Session.config do |config|
+  # Give sessions a decent lifetime, we'll enforce re-authentication
+  # ourselves.
+  config.timeout = 2.weeks
   config.cookie_name = "n2y_session_id"
   config.samesite = HTTP::Cookie::SameSite::Lax
   config.secure = Kemal.config.env == "production"
