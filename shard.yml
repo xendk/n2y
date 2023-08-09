@@ -7,6 +7,8 @@ authors:
 targets:
   server:
     main: src/server.cr
+  bump_changelog:
+    main: src/bump_changelog.cr
 
 crystal: '>= 1.7.3'
 

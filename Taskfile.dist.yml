@@ -35,25 +35,26 @@ tasks:
 
   release:
     desc: Cut a new release
-    env:
-      VERSION: "{{ .CLI_ARGS }}"
+    deps: [bump_changelog]
     cmds:
-      - |
-          sed -i -e "s/version: $(shards version)/version: $VERSION/" shard.yml
-      - git add shard.yml
-      - git commit -m"Release $VERSION"
-      - git tag $VERSION
+      - task: do-release
+        vars:
+          VERSION:
+            sh: ./bin/bump_changelog
     preconditions:
-      - sh: '[[ -n "$VERSION" ]]'
-        msg: Please supply a valid version on the command line after '--'
-      - sh: '[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]'
-        msg: Version must be in X.Y.Z format
-      - sh: '! git rev-parse $VERSION'
-        msg: Version {{ .CLI_ARGS }} already exists
       - sh: git diff --exit-code
         msg: Unstaged changes present
       - sh: git diff --cached --exit-code
         msg: Staged changes present
+
+  do-release:
+    internal: true
+    cmds:
+      - |
+          sed -i -e "s/version: $(shards version)/version: {{ .VERSION }}/" shard.yml
+      - git add shard.yml CHANGELOG.md
+      - git commit -m"Release {{ .VERSION }}"
+      - git tag {{ .VERSION }}
 
   dist-dir:
     internal: true
@@ -85,3 +86,13 @@ tasks:
       - public/**/*
     generates:
       - dist/public/**/*
+
+  bump_changelog:
+    internal: true
+    cmds:
+      - shards build bump_changelog
+    sources:
+      - src/bump_changelog.cr
+    generates:
+      - bin/bump_changelog
+

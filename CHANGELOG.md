@@ -14,6 +14,7 @@ changes).
 
 ### Changed
 - Let the session live longer, but require login at least once a week.
+- Make release building even more automated.
 
 ### Removed
 - Old test code and shard targets.
