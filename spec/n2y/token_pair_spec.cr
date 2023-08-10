@@ -1,5 +1,5 @@
-require "./spec_helper"
-require "../src/n2y/token_pair"
+require "../spec_helper"
+require "../../src/n2y/token_pair"
 
 include N2y
 

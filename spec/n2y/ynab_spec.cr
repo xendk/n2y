@@ -1,6 +1,6 @@
-require "./spec_helper"
-require "../src/n2y/ynab"
-require "../src/n2y/token_pair"
+require "../spec_helper"
+require "../../src/n2y/ynab"
+require "../../src/n2y/token_pair"
 
 example_uri = URI.parse("https://example.com/")
 

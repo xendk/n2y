@@ -1,6 +1,6 @@
-require "./spec_helper"
+require "../spec_helper"
 require "file_utils"
-require "../src/n2y/rotating_backend"
+require "../../src/n2y/rotating_backend"
 
 include N2y
 

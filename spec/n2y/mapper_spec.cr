@@ -1,6 +1,6 @@
-require "./spec_helper"
-require "../src/n2y/mapper"
-require "../src/n2y/ynab/transaction"
+require "../spec_helper"
+require "../../src/n2y/mapper"
+require "../../src/n2y/ynab/transaction"
 require "json"
 
 include N2y

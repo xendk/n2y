@@ -1,12 +1,12 @@
-require "./spec_helper"
+require "../spec_helper"
 require "spec-kemal"
-require "../src/n2y/app"
-require "../src/n2y/nordigen"
-require "../src/n2y/ynab"
-require "../src/n2y/rotating_backend"
+require "../../src/n2y/app"
+require "../../src/n2y/nordigen"
+require "../../src/n2y/ynab"
+require "../../src/n2y/rotating_backend"
 # Use a mock of MultiAuth that'll always return a user when we hit
 # /auth/callback.
-require "./mock-multi_auth"
+require "../mock-multi_auth"
 require "timecop"
 
 Kemal::Session.config do |config|
