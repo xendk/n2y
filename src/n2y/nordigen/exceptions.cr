@@ -22,5 +22,11 @@ module N2y
         super "Invalid secret_id/secret"
       end
     end
+
+    class ConnectionError < Exception
+      def initalize
+        super "Institution service unavailable"
+      end
+    end
   end
 end

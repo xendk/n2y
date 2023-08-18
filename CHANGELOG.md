@@ -8,6 +8,8 @@ bug fixes, minor releases new features, major relases significant
 changes).
 
 ## 1.3.1 - Unreleased
+### Added
+- Handle bank connection errors.
 
 ## 1.3.0 - 2023-08-09
 ### Added

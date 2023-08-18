@@ -142,6 +142,7 @@ module N2y
         raise "IP blacklisted" if response.status_code == 403
         raise "Ratelimit hit" if response.status_code == 429
         raise "Got redirect to #{response.headers["Location"]} on #{uri.path}" if response.status_code == 301
+        raise ConnectionError.new if response.status_code == 503
 
         raise "Unexpected response #{response.status_code} code \"#{response.status_message}\", body: #{response.body}"
       end

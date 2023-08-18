@@ -60,6 +60,11 @@ module N2y
         # update user last sync date
         @user.last_sync_time = runtime
         @user.save
+      rescue ex : N2y::Nordigen::ConnectionError
+        message = "Error communicating with bank, please try again later"
+
+        result << message
+        N2y::User::Log.error { message }
       rescue ex
         message = "Failed to sync transactions: #{ex.message}"
         result << message
