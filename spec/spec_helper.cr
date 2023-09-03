@@ -2,6 +2,7 @@ require "spec"
 require "../src/n2y/user"
 # Mock all HTTP requests.
 require "webmock"
+ENV["KEMAL_ENV"] = "test"
 require "kemal"
 
 ENV["SESSION_SECRET"] = "super secret"
