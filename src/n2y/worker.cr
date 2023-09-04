@@ -20,25 +20,17 @@ module N2y
         ynab = YNAB.new(@user.ynab_token_pair)
         count = 0
         duplicates = 0
-        accounts = N2y::Nordigen.new.accounts(@user.nordigen_requisition_id.as(String))
-
         ynab_transactions = {} of String => Array(YNAB::Transaction)
-        accounts.each do |id, account|
-          next unless @user.mapping.has_key?(account.iban)
+        bank = Bank.for(@user)
 
-          budget_id = @user.mapping[account.iban][:budget_id]
-
-          # We're not sending a to date to Nordigen, as it seems that
-          # at least Danske Bank applies it to the "valueDate". On
-          # credit accounts (at least in Danske Bank), the valueDate
-          # is in the future (mostly the first bankday of next month),
-          # so transactions wouldn't show up until then.
-          transactions = N2y::Nordigen.new.transactions(id, from: @user.last_sync_time)
+        @user.mapping.each do |iban, mapping|
+          budget_id = mapping[:budget_id]
+          transactions = bank.new_transactions(iban)
           ynab_transactions[budget_id] ||= [] of YNAB::Transaction
           # pass them through mapper
           transactions.each do |transaction|
             begin
-              ynab_transaction = N2y::Mapper.map(transaction, budget_id, @user.mapping[account.iban][:id], @user.id_seed)
+              ynab_transaction = N2y::Mapper.map(transaction, budget_id, mapping[:id], @user.id_seed)
               ynab_transactions[budget_id] << ynab_transaction if ynab_transaction
             rescue ex
               message = "Failed to map transaction #{transaction.dig?("transactionId") || "<unknown>"} with error #{ex.message}"

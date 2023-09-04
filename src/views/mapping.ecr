@@ -12,13 +12,13 @@
     Select which YNAB account to map bank accounts to:
   </p>
 
-  <% nordigen_accounts.values.each do |nordigen_account| %>
+  <% bank_accounts.each do |bank_account_id, bank_account_name| %>
   <div class="form-element">
-    <label for="<%= nordigen_account.iban %>"><%= nordigen_account.name %></label>
-    <select name="mapping[<%= nordigen_account.iban %>]" id="<%= nordigen_account.iban %>">
+    <label for="<%= bank_account_id %>"><%= bank_account_name %></label>
+    <select name="mapping[<%= bank_account_id %>]" id="<%= bank_account_id %>">
       <option value="">Don't sync this account</option>
       <% options.to_a.sort_by { |k, v| v }.to_h.each do |id, label| %>
-      <option value="<%= id %>" <%= mapping[nordigen_account.iban]? && mapping[nordigen_account.iban] == id ? "selected=\"selected\"" : "" %>><%= label %></option>
+      <option value="<%= id %>" <%= mapping[bank_account_id]? && mapping[bank_account_id] == id ? "selected=\"selected\"" : "" %>><%= label %></option>
       <% end %>
     </select>
   </div>

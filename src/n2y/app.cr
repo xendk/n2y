@@ -49,16 +49,17 @@ module N2y
 
     get "/mapping/form" do |env|
       user = (env.get "user").as(N2y::User)
-      error : String?
+      error = nil : String?
 
-      nordigen_accounts = {} of String => Nordigen::Account
+      bank_accounts = {} of String => String
       ynab_accounts = [] of YNAB::Account
 
       begin
-        nordigen_accounts = N2y::Nordigen.new.accounts(user.nordigen_requisition_id.as(String))
+        bank_accounts = Bank.for(user).accounts
       rescue ex
-        error = "Failed to fetch accounts from Nordigen: " + (ex.message || ex.class.to_s)
-        N2y::User::Log.error { error }
+        # Temporary workaround until we have a generic decorator for YNAB.
+        error = ex.message
+        N2y::User::Log.error { ex.message }
       end
 
       unless error

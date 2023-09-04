@@ -14,6 +14,7 @@ require "./n2y"
 require "./n2y/nordigen"
 require "./n2y/ynab"
 require "./n2y/user"
+require "./n2y/bank"
 require "./n2y/rotating_backend"
 require "./n2y/app"
 
