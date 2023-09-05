@@ -18,20 +18,18 @@ module N2y
 
       begin
         ynab = YNAB.new(@user.ynab_token_pair)
-        count = 0
         duplicates = 0
-        ynab_transactions = {} of String => Array(YNAB::Transaction)
+        ynab_transactions = [] of YNAB::Transaction
         bank = Bank.for(@user)
+        budget = Budget.for(@user)
 
         @user.mapping.each do |iban, mapping|
           budget_id = mapping[:budget_id]
           transactions = bank.new_transactions(iban)
-          ynab_transactions[budget_id] ||= [] of YNAB::Transaction
           # pass them through mapper
           transactions.each do |transaction|
             begin
-              ynab_transaction = N2y::Mapper.map(transaction, budget_id, mapping[:id], @user.id_seed)
-              ynab_transactions[budget_id] << ynab_transaction if ynab_transaction
+              ynab_transactions << N2y::Mapper.map(transaction, budget_id, mapping[:id], @user.id_seed)
             rescue ex
               message = "Failed to map transaction #{transaction.dig?("transactionId") || "<unknown>"} with error #{ex.message}"
               result << message
@@ -41,12 +39,13 @@ module N2y
           end
         end
 
-        ynab_transactions.each do |budget_id, transactions|
-          count += transactions.size
-          duplicates += ynab.push_transactions(budget_id, transactions) unless transactions.size.zero?
+        if ynab_transactions.size > 0
+          duplicates = budget.push_transactions(ynab_transactions)
+          message = "Synced #{ynab_transactions.size} transactions, #{duplicates} already existed"
+        else
+          message = "No new transactions to sync"
         end
 
-        message = "Synced #{count} transactions, #{duplicates} already existed"
         result << message
         User::Log.info { message }
         # update user last sync date
