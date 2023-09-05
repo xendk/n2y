@@ -10,7 +10,10 @@ class TestClient
   getter :_pushed
   @_pushed = [] of Tuple(String, Array(YNAB::Transaction))
 
+  def initialize(@_fail = false);end
+
   def accounts
+    raise "bad stuff happened" if @_fail
     [
       YNAB::Account.new("account1", "name1", "budgetId1", "budgetName1"),
       YNAB::Account.new("account2", "name2", "budgetId2", "budgetName2"),
@@ -72,5 +75,14 @@ describe Budget do
     client._pushed[0][1].should eq set1
     client._pushed[1][0].should eq "budgetId2"
     client._pushed[1][1].should eq set2
+  end
+
+  it "catches and propagates errors" do
+    user = User.new("user")
+    budget = Budget.new(user, TestClient.new(true))
+
+    expect_raises(Budget::Error, "Failed to fetch budget accounts: bad stuff happened") do
+      budget.accounts
+    end
   end
 end

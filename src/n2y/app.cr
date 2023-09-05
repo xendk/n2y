@@ -49,34 +49,16 @@ module N2y
 
     get "/mapping/form" do |env|
       user = (env.get "user").as(N2y::User)
-      error = nil : String?
-
-      bank_accounts = {} of String => String
-      budget_accounts = {} of String => String
 
       begin
         bank_accounts = Bank.for(user).accounts
-      rescue ex
-        # Temporary workaround until we have a generic decorator for YNAB.
-        error = ex.message
-        N2y::User::Log.error { ex.message }
-      end
-
-      unless error
-        begin
-          budget_accounts = Budget.for(user).accounts.to_a.sort_by { |k, v| v }.to_h
-        rescue ex
-          error = "Failed to fetch accounts from YNAB" + (ex.message || ex.class.to_s)
-          N2y::User::Log.error { error }
-        end
-      end
-
-      account_mapping = user.account_mapping
-
-      if error
-        render "src/views/mapping_error.ecr"
-      else
+        budget_accounts = Budget.for(user).accounts.to_a.sort_by { |k, v| v }.to_h
+        account_mapping = user.account_mapping
         render "src/views/mapping.ecr"
+      rescue ex
+        N2y::User::Log.error { ex.message }
+        error = ex.message
+        render "src/views/mapping_error.ecr"
       end
     end
 
