@@ -52,7 +52,7 @@ module N2y
       error = nil : String?
 
       bank_accounts = {} of String => String
-      ynab_accounts = [] of YNAB::Account
+      budget_accounts = {} of String => String
 
       begin
         bank_accounts = Bank.for(user).accounts
@@ -64,23 +64,14 @@ module N2y
 
       unless error
         begin
-          ynab_accounts = N2y::YNAB.new(user.ynab_token_pair).accounts
+          budget_accounts = Budget.for(user).accounts.to_a.sort_by { |k, v| v }.to_h
         rescue ex
           error = "Failed to fetch accounts from YNAB" + (ex.message || ex.class.to_s)
           N2y::User::Log.error { error }
         end
       end
 
-      options = {} of String => String
-
-      ynab_accounts.each do |ynab_account|
-        options[ynab_account.id + "|" + ynab_account.budget_id] = ynab_account.budget_name + ": " + ynab_account.name
-      end
-
-      mapping = {} of String => String
-      user.mapping.each do |key, value|
-        mapping[key] = value[:id] + "|" + value[:budget_id]
-      end
+      account_mapping = user.account_mapping
 
       if error
         render "src/views/mapping_error.ecr"
@@ -91,19 +82,16 @@ module N2y
 
     post "/mapping/save" do |env|
       user = (env.get "user").as(N2y::User)
-      mapping = {} of String => NamedTuple(id: String, budget_id: String)
+      account_mapping = {} of String => String
 
       env.params.body.each do |key, value|
         key = key[/mapping\[(.+)\]/, 1]?
-        next unless key
+        next unless key && !value.empty?
 
-        value.split('|', 2).tap do |ids|
-          next unless ids.size == 2
-          mapping[key] = {id: ids[0], budget_id: ids[1]}
-        end
+        account_mapping[key] = value
       end
 
-      user.mapping = mapping
+      user.account_mapping = account_mapping
       user.id_seed = env.params.body["id_seed"].as(String)
       begin
         user.last_sync_time = Time.parse_utc(env.params.body["last_sync_time"].as(String), "%F")

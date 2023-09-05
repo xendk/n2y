@@ -79,23 +79,36 @@ describe User do
     user.ynab_token_pair.refresh?.should eq("refresh")
   end
 
+  it "migrates mapping to account_mapping" do
+    clear_users
+    mapping = {} of String => NamedTuple(id: String, budget_id: String)
+
+    mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
+    mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
+
+    user = User.get("mapping")
+
+    user.mapping = mapping
+    user.account_mapping.should eq({"account1" => "id1", "account2" => "id2"})
+  end
+
   context "it stores" do
     it "account mapping" do
       clear_users
-      mapping = {} of String => NamedTuple(id: String, budget_id: String)
+      account_mapping = {} of String => String
 
-      mapping["account1"] = {id: "id1", budget_id: "budget_id1"}
-      mapping["account2"] = {id: "id2", budget_id: "budget_id2"}
+      account_mapping["account1"] = "id1"
+      account_mapping["account2"] = "id2"
 
       user = User.get("mapping")
 
-      user.mapping = mapping
-      user.mapping.should eq(mapping)
+      user.account_mapping = account_mapping
+      user.account_mapping.should eq(account_mapping)
       user.save
 
       User.load_from_disk
       user = User.get("mapping")
-      user.mapping.should eq(mapping)
+      user.account_mapping.should eq(account_mapping)
     end
 
     it "last_sync_time" do

@@ -17,8 +17,8 @@
     <label for="<%= bank_account_id %>"><%= bank_account_name %></label>
     <select name="mapping[<%= bank_account_id %>]" id="<%= bank_account_id %>">
       <option value="">Don't sync this account</option>
-      <% options.to_a.sort_by { |k, v| v }.to_h.each do |id, label| %>
-      <option value="<%= id %>" <%= mapping[bank_account_id]? && mapping[bank_account_id] == id ? "selected=\"selected\"" : "" %>><%= label %></option>
+      <% budget_accounts.each do |id, label| %>
+      <option value="<%= id %>" <%= account_mapping[bank_account_id]? && account_mapping[bank_account_id] == id ? "selected=\"selected\"" : "" %>><%= label %></option>
       <% end %>
     </select>
   </div>

@@ -23,6 +23,7 @@ module N2y
     property ynab_refresh_token : String?
     property last_sync_time : Time = Time.unix(0)
     property mapping = {} of String => NamedTuple(id: String, budget_id: String)
+    setter account_mapping = {} of String => String
     property id_seed = ""
 
     @[YAML::Field(ignore: true)]
@@ -59,6 +60,16 @@ module N2y
 
     def save
       File.write(path, to_yaml)
+    end
+
+    def account_mapping
+      if @account_mapping.empty?
+        @mapping.each do |key, value|
+          @account_mapping[key] = value[:id]
+        end
+      end
+
+      @account_mapping
     end
 
     def ynab_token_pair
