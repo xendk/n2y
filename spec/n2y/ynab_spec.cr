@@ -86,7 +86,6 @@ describe YNAB do
 
     transactions = [
       YNAB::Transaction.new(
-        budget_id: "123",
         account_id: "132",
         date: "2015-01-01",
         amount: 1000,
@@ -94,7 +93,6 @@ describe YNAB do
         import_id: "321"
       ),
       YNAB::Transaction.new(
-        budget_id: "123",
         account_id: "132",
         date: "2015-01-02",
         amount: 1000,

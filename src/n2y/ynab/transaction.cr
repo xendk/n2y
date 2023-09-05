@@ -4,8 +4,6 @@ module N2y
     class Transaction
       include JSON::Serializable
 
-      @[JSON::Field(ignore: true)]
-      property budget_id : String?
       property account_id : String?
       property date : String?
       # Amount in milliunits format.
@@ -14,10 +12,9 @@ module N2y
       property cleared = "cleared"
       property import_id : String?
 
-      def_equals :budget_id, :account_id, :date, :amount, :payee_name, :import_id
+      def_equals :account_id, :date, :amount, :payee_name, :import_id
 
-      def initialize(*, budget_id : String? = nil, account_id : String? = nil, date : String? = nil, amount : Int32? = nil, payee_name : String? = nil, import_id : String? = nil)
-        @budget_id = budget_id
+      def initialize(*, account_id : String? = nil, date : String? = nil, amount : Int32? = nil, payee_name : String? = nil, import_id : String? = nil)
         @account_id = account_id
         @date = date
         @amount = amount
@@ -26,7 +23,7 @@ module N2y
       end
 
       def valid?
-        @budget_id && @account_id && @date && @amount && @payee_name && @import_id
+        @account_id && @date && @amount && @payee_name && @import_id
       end
     end
   end

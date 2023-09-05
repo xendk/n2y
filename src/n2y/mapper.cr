@@ -3,7 +3,7 @@ require "digest/sha1"
 
 module N2y
   module Mapper
-    def self.map(data : JSON::Any, budget_id : String, account_id : String, id_seed = "") : N2y::YNAB::Transaction?
+    def self.map(data : JSON::Any, account_id : String, id_seed = "") : N2y::YNAB::Transaction?
       booking_date = data.dig?("bookingDate").try &.as_s
       raise "No booking date in transaction" unless booking_date
       raise "Invalid booking date: #{booking_date}" unless booking_date =~ /^\d{4}-\d{2}-\d{2}$/
@@ -23,7 +23,6 @@ module N2y
       # raise "Transaction in future" if
 
       YNAB::Transaction.new(
-        budget_id: budget_id,
         account_id: account_id,
         date: booking_date,
         amount: amount,

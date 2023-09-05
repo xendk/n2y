@@ -41,7 +41,6 @@ describe Budget do
 
     set1 = [
       YNAB::Transaction.new(
-      budget_id: "should be ignored",
       account_id: "account1",
       date: "2020-01-01",
       amount: 1000,
@@ -49,7 +48,6 @@ describe Budget do
       import_id: "imp1",
     ),
       YNAB::Transaction.new(
-        budget_id: "should be ignored",
         account_id: "account1",
         date: "2020-01-01",
         amount: 1000,
@@ -59,7 +57,6 @@ describe Budget do
     ]
     set2 = [
       YNAB::Transaction.new(
-      budget_id: "should be ignored",
       account_id: "account2",
       date: "2020-01-01",
       amount: 1000,
