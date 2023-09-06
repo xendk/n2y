@@ -9,7 +9,9 @@ class TestClient
   # Log of pushed transactions.
   getter :_pushed
   @_pushed = [] of Tuple(String, Array(YNAB::Transaction))
+  @_fail = false
 
+  def initialize(token_pair : TokenPair); end
   def initialize(@_fail = false);end
 
   def accounts
@@ -84,5 +86,12 @@ describe Budget do
     expect_raises(Budget::Error, "Failed to fetch budget accounts: bad stuff happened") do
       budget.accounts
     end
+  end
+
+  it "should return the same budget for the same user" do
+    user = User.new("user")
+    budget = Budget.for(user, TestClient)
+
+    Budget.for(user, TestClient).should be budget
   end
 end

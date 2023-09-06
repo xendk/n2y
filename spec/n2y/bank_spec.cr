@@ -113,4 +113,13 @@ describe Bank do
 
     client.accounts_calls.should eq 2
   end
+
+  it "should return the same bank for the same user" do
+    user = User.new("user")
+    user.nordigen_requisition_id = "requisition_id"
+    bank = Bank.for(user, TestClient)
+
+    Bank.for(user, TestClient).should be bank
+  end
+
 end

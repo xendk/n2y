@@ -1,13 +1,17 @@
 require "./user"
 
 module N2y
+  module BudgetModule; end
+
   class Budget(ClientType)
+    include BudgetModule
     class Error < Exception; end
 
+    @@budgets = {} of User => BudgetModule
     @accounts = {} of String => NamedTuple(name: String, budget_id: String, budget_name: String)
 
     def self.for(user : User, klass : ClientType.class = YNAB)
-      new(user, klass.new(user.ynab_token_pair))
+      @@budgets[user] ||= new(user, klass.new(user.ynab_token_pair))
     end
 
     def initialize(@user : User, @client : ClientType); end

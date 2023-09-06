@@ -1,15 +1,20 @@
 require "./user"
 
 module N2y
+  module BankModule;end
+
   class Bank(ClientType)
+    include BankModule
+
     class Error < Exception; end
 
     record Account, iban : String, name : String
 
+    @@banks = {} of User => BankModule
     @accounts = {} of String => Account
 
     def self.for(user : User, klass : ClientType.class = Nordigen)
-      new(user, klass.new)
+      @@banks[user] ||= new(user, klass.new)
     end
 
     def initialize(@user : User, @client : ClientType); end
