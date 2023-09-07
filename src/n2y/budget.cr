@@ -5,6 +5,7 @@ module N2y
 
   class Budget(ClientType)
     include BudgetModule
+
     class Error < Exception; end
 
     @@budgets = {} of User => BudgetModule
@@ -48,10 +49,10 @@ module N2y
 
       @accounts = @client.accounts.map { |account|
         {account.id, {
-           name: account.name,
-           budget_id: account.budget_id,
-           budget_name: account.budget_name,
-         }}
+          name:        account.name,
+          budget_id:   account.budget_id,
+          budget_name: account.budget_name,
+        }}
       }.to_h
     end
   end

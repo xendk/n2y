@@ -1,19 +1,20 @@
 # Authentication related code for the web app.
 module N2y::App::Auth
   excluded_get = [
-      "/favicon.ico",
-      "/privacy-policy",
-      "/tos",
-      "/auth",
-      "/auth/callback",
-      "/auth/tos",
-      "/auth/logout",
-      "/auth/error",
-      "/kaboom",
+    "/favicon.ico",
+    "/privacy-policy",
+    "/tos",
+    "/auth",
+    "/auth/callback",
+    "/auth/tos",
+    "/auth/logout",
+    "/auth/error",
+    "/kaboom",
   ]
   excluded_post = [
-      "/auth/tos",
+    "/auth/tos",
   ]
+
   # Kemal middleware for authentication.
   #
   # Redirects to login page if user is not authenticated, and sets up
@@ -113,7 +114,7 @@ module N2y::App::Auth
       user = MultiAuth.make("google", redirect_uri).user(env.params.query)
       mail = user.email
     rescue ex
-        log_exception(ex)
+      log_exception(ex)
     end
 
     if mail

@@ -31,14 +31,14 @@ describe Nordigen do
     WebMock.stub(:get, api_root + "random_endpoint/")
       .with(body: "", headers: token_expected_headers)
       .to_return do |request|
-      if request.headers["Authorization"]? != "Bearer access_token"
-        HTTP::Client::Response.new(401, body: "Access denied")
-      else
-        HTTP::Client::Response.new(200, body: "{\"dummy\": \"data\"}")
+        if request.headers["Authorization"]? != "Bearer access_token"
+          HTTP::Client::Response.new(401, body: "Access denied")
+        else
+          HTTP::Client::Response.new(200, body: "{\"dummy\": \"data\"}")
+        end
       end
-    end
 
-    token_pair = TokenPair.new()
+    token_pair = TokenPair.new
     nordigen = Nordigen.new(token_pair)
 
     nordigen.get("random_endpoint", class: Nordigen::DummyResponse).dummy.should eq("data")
@@ -55,12 +55,12 @@ describe Nordigen do
     WebMock.stub(:get, api_root + "random_endpoint/")
       .with(body: "", headers: token_expected_headers)
       .to_return do |request|
-      if request.headers["Authorization"]? != "Bearer new_access_token"
-        HTTP::Client::Response.new(401, body: "Access denied")
-      else
-        HTTP::Client::Response.new(200, body: "{\"dummy\": \"data\"}")
+        if request.headers["Authorization"]? != "Bearer new_access_token"
+          HTTP::Client::Response.new(401, body: "Access denied")
+        else
+          HTTP::Client::Response.new(200, body: "{\"dummy\": \"data\"}")
+        end
       end
-    end
 
     token_pair = TokenPair.new(refresh: "the_refresh_token")
     nordigen = Nordigen.new(token_pair)
@@ -78,7 +78,7 @@ describe Nordigen do
       .with(body: "", headers: token_expected_headers)
       .to_return(status: 401)
 
-    nordigen = Nordigen.new()
+    nordigen = Nordigen.new
 
     expect_raises(Exception, message: "Invalid secret_id/secret") do
       nordigen.get("random_endpoint", class: Nordigen::DummyResponse)
@@ -107,9 +107,9 @@ describe Nordigen do
   it "#get returns requested class" do
     nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
 
-    WebMock.stub(:get, api_root + "random_endpoint/").
-      with(body: "", headers: token_expected_headers).
-      to_return(body: "{\"dummy\": \"data\"}")
+    WebMock.stub(:get, api_root + "random_endpoint/")
+      .with(body: "", headers: token_expected_headers)
+      .to_return(body: "{\"dummy\": \"data\"}")
 
     nordigen.get("random_endpoint", class: Nordigen::DummyResponse).dummy.should eq("data")
   end

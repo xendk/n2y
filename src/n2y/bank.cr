@@ -1,7 +1,7 @@
 require "./user"
 
 module N2y
-  module BankModule;end
+  module BankModule; end
 
   class Bank(ClientType)
     include BankModule

@@ -29,7 +29,7 @@ describe RotatingBackend do
           timestamp: Time.utc(2023, 5, 17, 18, 35, 27)
         )
 
-        RotatingBackend.new().write(entry)
+        RotatingBackend.new.write(entry)
 
         entry = Log::Entry.new(
           "here2",
@@ -40,7 +40,7 @@ describe RotatingBackend do
           timestamp: Time.utc(2023, 5, 17, 18, 35, 35)
         )
 
-        RotatingBackend.new().write(entry)
+        RotatingBackend.new.write(entry)
 
         File.exists?("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq true
         File.read("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq "2023-05-17T18:35:27.000000Z\tERROR\tlog message\t{}\n2023-05-17T18:35:35.000000Z\tERROR\tsecond log message\n"
@@ -62,7 +62,7 @@ describe RotatingBackend do
           timestamp: Time.utc(2023, 5, 17, 18, 35, 27)
         )
 
-        RotatingBackend.new().write(entry)
+        RotatingBackend.new.write(entry)
 
         entry = Log::Entry.new(
           "here2",
@@ -73,7 +73,7 @@ describe RotatingBackend do
           timestamp: Time.utc(2023, 5, 18, 18, 35, 35)
         )
 
-        RotatingBackend.new().write(entry)
+        RotatingBackend.new.write(entry)
 
         File.exists?("/tmp/n2y-test/storage/logs/test/2023-05-17.log").should eq true
         File.exists?("/tmp/n2y-test/storage/logs/test/2023-05-18.log").should eq true

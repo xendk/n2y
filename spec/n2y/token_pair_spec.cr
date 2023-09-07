@@ -88,7 +88,7 @@ describe TokenPair do
   end
 
   it "can tell if it's usable" do
-    TokenPair.new().usable?.should be_falsey
+    TokenPair.new.usable?.should be_falsey
     TokenPair.new(access: "foo").usable?.should be_truthy
     TokenPair.new(refresh: "foo").usable?.should be_truthy
   end

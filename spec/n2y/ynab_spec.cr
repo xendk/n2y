@@ -50,7 +50,6 @@ describe YNAB do
         .with(body: "", headers: {"Accept" => "application/json", "Content-Type" => "application/json", "User-Agent" => "N2y", "Authorization" => "Bearer access_token2"})
         .to_return(body: "{\"dummy\": \"dummy_val\"}")
 
-
       token_pair = TokenPair.new(access: "access_token", refresh: "refresh_token")
       ynab = YNAB.new(token_pair)
 

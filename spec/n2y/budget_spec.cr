@@ -12,7 +12,8 @@ class TestClient
   @_fail = false
 
   def initialize(token_pair : TokenPair); end
-  def initialize(@_fail = false);end
+
+  def initialize(@_fail = false); end
 
   def accounts
     raise "bad stuff happened" if @_fail
@@ -35,8 +36,8 @@ describe Budget do
 
     budget.accounts.should eq Hash{
       "account1" => "budgetName1 - name1",
-      "account2" => "budgetName2 - name2"
-    };
+      "account2" => "budgetName2 - name2",
+    }
   end
 
   it "pushes transactions" do
@@ -46,12 +47,12 @@ describe Budget do
 
     set1 = [
       YNAB::Transaction.new(
-      account_id: "account1",
-      date: "2020-01-01",
-      amount: 1000,
-      payee_name: "payee",
-      import_id: "imp1",
-    ),
+        account_id: "account1",
+        date: "2020-01-01",
+        amount: 1000,
+        payee_name: "payee",
+        import_id: "imp1",
+      ),
       YNAB::Transaction.new(
         account_id: "account1",
         date: "2020-01-01",
@@ -62,12 +63,12 @@ describe Budget do
     ]
     set2 = [
       YNAB::Transaction.new(
-      account_id: "account2",
-      date: "2020-01-01",
-      amount: 1000,
-      payee_name: "payee",
-      import_id: "imp3",
-    ),
+        account_id: "account2",
+        date: "2020-01-01",
+        amount: 1000,
+        payee_name: "payee",
+        import_id: "imp3",
+      ),
     ]
 
     budget.push_transactions(set1 + set2).should eq 0

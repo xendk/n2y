@@ -29,7 +29,7 @@ module N2y
     @daystamp : Int32?
     @files = {} of String => IO
 
-    def initialize()
+    def initialize
       @mutex = Mutex.new(:unchecked)
       # Async segfaults, see https://github.com/crystal-lang/crystal/issues/13721
       super(dispatch_mode: Log::DispatchMode::Sync)

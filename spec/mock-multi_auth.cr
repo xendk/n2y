@@ -12,7 +12,7 @@ module MultiAuth
   end
 
   def self.make(provider, redirect_uri)
-    return FakeEngine.new()
+    return FakeEngine.new
   end
 
   class FakeEngine

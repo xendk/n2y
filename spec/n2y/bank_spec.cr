@@ -7,6 +7,7 @@ include N2y
 class TestClient
   struct Account
     property :iban, :name
+
     def initialize(@iban : String, @name : String); end
   end
 
@@ -35,7 +36,7 @@ class TestClient
     case account_id
     when "123#{@id_epoc}"
       return [
-        JSON.parse(%({"bookingDate":"2020-01-01","amount":1.0,"currency":"EUR"}))
+        JSON.parse(%({"bookingDate":"2020-01-01","amount":1.0,"currency":"EUR"})),
       ]
     when "321#{@id_epoc}"
       return [] of JSON::Any
@@ -53,8 +54,8 @@ describe Bank do
 
     bank.accounts.should eq Hash{
       "iban1" => "name1",
-      "iban2" => "name2"
-    };
+      "iban2" => "name2",
+    }
   end
 
   it "should raise on missing requisition id" do
@@ -121,5 +122,4 @@ describe Bank do
 
     Bank.for(user, TestClient).should be bank
   end
-
 end

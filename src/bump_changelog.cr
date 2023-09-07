@@ -4,7 +4,7 @@ require "semantic_version"
 # new "Unreleased" section. Outputs the previously unreleased version
 # number to stdout.
 begin
-  buffer = IO::Memory.new()
+  buffer = IO::Memory.new
 
   version = nil : String?
 
@@ -15,7 +15,6 @@ begin
         next_version = SemanticVersion.parse(version).bump_patch
 
         buffer << "## #{next_version} - Unreleased\n\n"
-
 
         buffer << "## #{version} - #{Time.utc.to_s("%Y-%m-%d")}\n"
       else
@@ -32,7 +31,6 @@ begin
   File.open("CHANGELOG.md", "w") do |file|
     file << buffer
   end
-
 rescue ex
   puts ex
   exit 1
