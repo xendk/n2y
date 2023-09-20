@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major relases significant
 changes).
 
-## 1.4.0 - Unreleased
+## 1.4.1 - Unreleased
+
+## 1.4.0 - 2023-09-20
 ### Added
 - Caching accounts information.
 - Handle bank connection errors.
