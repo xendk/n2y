@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major releases significant
 changes).
 
-## 1.5.0 - Unreleased
+## 1.5.1 - Unreleased
+
+## 1.5.0 - 2023-10-02
 ### Added
 - Periodical, hands-free syncing of transactions.
 
