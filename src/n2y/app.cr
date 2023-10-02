@@ -54,6 +54,7 @@ module N2y
         bank_accounts = Bank.for(user).accounts
         budget_accounts = Budget.for(user).accounts.to_a.sort_by { |k, v| v }.to_h
         account_mapping = user.account_mapping
+        sync_interval = user.sync_interval
         render "src/views/mapping.ecr"
       rescue ex
         N2y::User::Log.error { ex.message }
@@ -75,6 +76,7 @@ module N2y
 
       user.account_mapping = account_mapping
       user.id_seed = env.params.body["id_seed"].as(String)
+      user.sync_interval = env.params.body["sync_interval"].as(String).to_i
       begin
         user.last_sync_time = Time.parse_utc(env.params.body["last_sync_time"].as(String), "%F")
       rescue ex

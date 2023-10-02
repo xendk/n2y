@@ -115,5 +115,29 @@ end
 
 Habitat.raise_if_missing_settings!
 
+# Periodical background tasks.
+spawn do
+  log "Starting background tasks"
+  loop do
+    # Running all users' background tasks in parallel,
+    N2y::User.all.each do |user|
+      if user.sync_interval.positive? && user.last_sync_time + Time::Span.new(seconds: user.sync_interval) < Time.utc
+        spawn do
+          begin
+            N2y::User::Log.context.set user_id: user.mail
+            worker = N2y::Worker.new user
+            worker.run
+          rescue ex
+            log_exception(ex)
+          end
+        end
+      end
+
+      sleep 5.minutes
+    end
+  end
+end
+
+
 # We've set up our own signal handling, so disable Kemal's.
 Kemal.run(trap_signal: false)

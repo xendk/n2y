@@ -8,6 +8,26 @@
     </small>
   </div>
 
+  <div class="form-element">
+    <label for="sync_interval">Sync interval</label>
+    <select name="sync_interval" id="sync_interval">
+      <% options = {
+         0 => "Don't automatically sync",
+      3600 => "Every hour",
+      10800 => "Every 3 hours",
+      21600 => "Every 6 hours",
+      43200 => "Every 12 hours",
+      86400 => "Every 24 hours",
+      } %>
+      <% options.each do |secs, label| %>
+      <option value="<%= secs %>" <%= sync_interval == secs ? "selected=\"selected\"" : "" %>><%= label %></option>
+      <% end %>
+    </select>
+    <small>
+      Transactions are automatically synced at this interval.
+    </small>
+  </div>
+
   <p>
     Select which YNAB account to map bank accounts to:
   </p>

@@ -22,6 +22,7 @@ module N2y
     property nordigen_requisition_id : String?
     property ynab_refresh_token : String?
     property last_sync_time : Time = Time.unix(0)
+    property sync_interval : Int32 = 0
     property mapping = {} of String => NamedTuple(id: String, budget_id: String)
     setter account_mapping = {} of String => String
     property id_seed = ""
@@ -45,6 +46,10 @@ module N2y
 
     def self.get(mail : String)
       @@users[mail] ||= User.new(mail)
+    end
+
+    def self.all
+      @@users.values
     end
 
     def initialize(@mail : String)
