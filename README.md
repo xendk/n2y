@@ -5,7 +5,7 @@ importing bank data into [YNAB](https://www.youneedabudget.com/). It
 supports importing from [banks supported by
 Nordigen](https://nordigen.com/en/coverage/).
 
-## Bulid requirements
+## Build requirements
 
 * [Crystal Language](https://crystal-lang.org/) compiler
 * [Task](https://taskfile.dev/) (optional but recommended)
