@@ -25,7 +25,6 @@ module N2y
 
         @user.account_mapping.each do |iban, account_id|
           transactions = bank.new_transactions(iban)
-          # pass them through mapper
           transactions.each do |transaction|
             begin
               ynab_transactions << N2y::Mapper.map(transaction, account_id, @user.id_seed)
@@ -47,7 +46,7 @@ module N2y
 
         result << message
         User::Log.info { message }
-        # update user last sync date
+
         @user.last_sync_time = runtime
         @user.save
       rescue ex : N2y::Nordigen::ConnectionError

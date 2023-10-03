@@ -119,7 +119,9 @@ Habitat.raise_if_missing_settings!
 spawn do
   log "Starting background tasks"
   loop do
-    # Running all users' background tasks in parallel,
+    # Running all users' background tasks in parallel, we have a very
+    # limited amount of users, and the task are mostly IO-bound, so
+    # they should parallelize well.
     N2y::User.all.each do |user|
       if user.sync_interval.positive? && user.last_sync_time + Time::Span.new(seconds: user.sync_interval) < Time.utc
         spawn do
