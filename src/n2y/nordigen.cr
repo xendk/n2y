@@ -138,6 +138,20 @@ module N2y
     # status code.
     protected def handle_status_codes(uri, response)
       if !response.success?
+        # Apparently expired EUA doesn't have it's own status code.
+        if response.status_code == 400
+          begin
+            json = JSON.parse(response.body)
+            summary = json["summary"].as_s
+            raise EUAExpiredError.new if summary[/^End User Agreement \(EUA\) .* has expired$/]
+          rescue ex : EUAExpiredError
+            raise ex
+          else
+            # If we can't parse the response, just fall through to the
+            # generic case.
+          end
+        end
+
         raise (DENIED_MAPPING[uri.path]? || InvalidAccessToken).new if response.status_code == 401
         raise "IP blacklisted" if response.status_code == 403
         raise "Ratelimit hit" if response.status_code == 429

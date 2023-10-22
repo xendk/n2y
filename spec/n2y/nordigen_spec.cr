@@ -196,4 +196,17 @@ describe Nordigen do
     transactions[1]["id"].as_s.should eq "2"
     transactions[1]["name"].as_s.should eq "two"
   end
+
+  it "raises EUAExpiredError on expired EUA" do
+    nordigen = Nordigen.new(TokenPair.new(access: "access_token"))
+
+    # Not full responses, but what we care about.
+    WebMock.stub(:get, api_root + "requisitions/123/")
+      .with(headers: expected_headers)
+      .to_return(status: 400, body: "{\"summary\":\"End User Agreement (EUA) deadbeef-1234-5678-9abc-fedcba987654 has expired\",\"detail\":\"EUA was valid for 90 days and it expired at 2023-10-21 13:52:02.775845. The end user must connect the account once more with new EUA and Requisition\",\"status_code\":400}")
+
+    expect_raises(Nordigen::EUAExpiredError) do
+      accounts = nordigen.accounts("123")
+    end
+  end
 end

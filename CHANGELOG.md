@@ -8,6 +8,9 @@ bug fixes, minor releases new features, major releases significant
 changes).
 
 ## 1.5.1 - Unreleased
+### Changed
+- Try to identify EUA expired errors, so we can handle them
+  specifically at some point. 
 
 ## 1.5.0 - 2023-10-02
 ### Added

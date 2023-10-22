@@ -28,5 +28,11 @@ module N2y
         super "Institution service unavailable"
       end
     end
+
+    class EUAExpiredError < Exception
+      def initialize
+        super "End user agreement expired"
+      end
+    end
   end
 end
