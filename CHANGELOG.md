@@ -10,7 +10,10 @@ changes).
 ## 1.5.1 - Unreleased
 ### Changed
 - Try to identify EUA expired errors, so we can handle them
-  specifically at some point. 
+  specifically at some point.
+  
+### Fixed
+- Skip unknown accounts, but carry on syncing.
 
 ## 1.5.0 - 2023-10-02
 ### Added

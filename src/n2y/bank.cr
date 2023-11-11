@@ -8,6 +8,8 @@ module N2y
 
     class Error < Exception; end
 
+    class UnknownAccount < Error; end
+
     record Account, iban : String, name : String
 
     @@banks = {} of User => BankModule
@@ -68,7 +70,7 @@ module N2y
       with_account_refetch do
         account = @accounts.find { |id, account| account.iban == iban }
 
-        raise Error.new("No account with IBAN #{iban}") unless account
+        raise UnknownAccount.new("No account with IBAN #{iban}") unless account
 
         account_id, _ = account
         # We're not sending a to date to Nordigen, as it seems that at
@@ -81,6 +83,8 @@ module N2y
         # between Nordigen and YNAB.
         @client.transactions(account_id, from: @user.last_sync_time)
       end
+    rescue ex : UnknownAccount
+      raise ex
     rescue ex
       raise Error.new("Failed to fetch transactions for #{iban}: #{ex.message || ex.class.to_s}", ex)
     end

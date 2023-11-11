@@ -101,6 +101,18 @@ describe Bank do
     client.accounts_calls.should eq 1
   end
 
+  it "raises UnknownAccount on unknown account" do
+    user = User.new("user")
+    user.nordigen_requisition_id = "requisition_id"
+    user.last_sync_time = Time.utc(2023, 4, 23, 17, 51, 54)
+    client = TestClient.new
+    bank = Bank.new(user, client)
+
+    expect_raises(Bank::UnknownAccount, "No account with IBAN iban3") do
+      bank.new_transactions("iban3")
+    end
+  end
+
   it "should refetch accounts when ids change" do
     user = User.new("user")
     user.nordigen_requisition_id = "requisition_id"
