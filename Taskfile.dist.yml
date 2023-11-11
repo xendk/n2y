@@ -72,6 +72,7 @@ tasks:
     cmds:
       - crystal build src/server.cr -o dist/bin/server --release
     sources:
+      - shard.yml
       - src/**/*
       - lib/**/*
     generates:
