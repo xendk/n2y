@@ -11,6 +11,8 @@ changes).
 ### Changed
 - Try to identify EUA expired errors, so we can handle them
   specifically at some point.
+- Catch 409 when fetching accounts. Seems that deleted accounts can
+  still show up on the requisition, but return error when fetched.
   
 ### Fixed
 - Skip unknown accounts, but carry on syncing.

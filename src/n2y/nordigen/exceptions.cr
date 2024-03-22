@@ -34,5 +34,11 @@ module N2y
         super "End user agreement expired"
       end
     end
+
+    class SuspendedError < Exception
+      def initialize
+        super "Account or requisition was suspended"
+      end
+    end
   end
 end

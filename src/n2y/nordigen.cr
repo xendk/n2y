@@ -37,8 +37,12 @@ module N2y
       accounts = {} of String => Account
       requisition = get("requisitions/#{requisition_id}", class: Requisition)
       requisition.accounts.each do |account_id|
-        response = get("accounts/#{account_id}/details", class: AccountResponse)
-        accounts[account_id] = response.account
+        begin
+          response = get("accounts/#{account_id}/details", class: AccountResponse)
+          accounts[account_id] = response.account
+        rescue ex : SuspendedError
+          # Account suspended, ignore.
+        end
       end
 
       accounts
@@ -154,10 +158,10 @@ module N2y
 
         raise (DENIED_MAPPING[uri.path]? || InvalidAccessToken).new if response.status_code == 401
         raise "IP blacklisted" if response.status_code == 403
+        raise SuspendedError.new if response.status_code == 409
         raise "Ratelimit hit" if response.status_code == 429
         raise "Got redirect to #{response.headers["Location"]} on #{uri.path}" if response.status_code == 301
         raise ConnectionError.new if response.status_code == 503
-
         raise "Unexpected response #{response.status_code} code \"#{response.status_message}\", body: #{response.body}"
       end
     rescue ex : InvalidAccessToken | InvalidRefreshToken
