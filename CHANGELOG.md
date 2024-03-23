@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major releases significant
 changes).
 
-## 1.5.1 - Unreleased
+## 1.5.2 - Unreleased
+
+## 1.5.1 - 2024-03-23
 ### Changed
 - Try to identify EUA expired errors, so we can handle them
   specifically at some point.
