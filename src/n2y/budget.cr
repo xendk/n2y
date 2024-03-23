@@ -21,8 +21,6 @@ module N2y
     def accounts
       ensure_accounts
       @accounts.map { |id, account| {id, "#{account[:budget_name]} - #{account[:name]}"} }.to_h
-    rescue ex
-      raise Error.new("Failed to fetch budget accounts: #{ex.message || ex.class.to_s}", ex)
     end
 
     def push_transactions(transactions : Array(YNAB::Transaction))
@@ -40,8 +38,6 @@ module N2y
       end
 
       skipped
-    rescue ex
-      raise Error.new("Failed to push transactions: #{ex.message || ex.class.to_s}", ex)
     end
 
     protected def ensure_accounts

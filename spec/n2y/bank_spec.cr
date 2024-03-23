@@ -67,16 +67,6 @@ describe Bank do
     end
   end
 
-  it "catches and propagates errors" do
-    user = User.new("user")
-    user.nordigen_requisition_id = "bad_id"
-    bank = Bank.new(user, TestClient.new)
-
-    expect_raises(Bank::Error, "Failed to fetch bank accounts: bad requisition_id") do
-      bank.accounts
-    end
-  end
-
   it "caches accounts" do
     user = User.new("user")
     user.nordigen_requisition_id = "requisition_id"

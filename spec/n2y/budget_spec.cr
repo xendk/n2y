@@ -80,15 +80,6 @@ describe Budget do
     client._pushed[1][1].should eq set2
   end
 
-  it "catches and propagates errors" do
-    user = User.new("user")
-    budget = Budget.new(user, TestClient.new(true))
-
-    expect_raises(Budget::Error, "Failed to fetch budget accounts: bad stuff happened") do
-      budget.accounts
-    end
-  end
-
   it "should return the same budget for the same user" do
     user = User.new("user")
     budget = Budget.for(user, TestClient)

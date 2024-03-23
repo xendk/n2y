@@ -36,8 +36,6 @@ module N2y
       @client.accounts(requisition_id).each do |id, account|
         @accounts[id] = Account.new(account.iban, account.name)
       end
-    rescue ex
-      raise Error.new("Failed to fetch bank accounts: #{ex.message || ex.class.to_s}", ex)
     end
 
     protected def with_account_refetch
@@ -58,8 +56,6 @@ module N2y
       end
 
       accounts
-    rescue ex
-      raise Error.new("Failed to fetch bank accounts: #{ex.message || ex.class.to_s}", ex)
     end
 
     # Get new transactions for the given IBAN.
@@ -85,8 +81,6 @@ module N2y
       end
     rescue ex : UnknownAccount
       raise ex
-    rescue ex
-      raise Error.new("Failed to fetch transactions for #{iban}: #{ex.message || ex.class.to_s}", ex)
     end
   end
 end
