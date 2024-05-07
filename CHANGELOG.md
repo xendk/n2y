@@ -8,6 +8,8 @@ bug fixes, minor releases new features, major releases significant
 changes).
 
 ## 1.5.2 - Unreleased
+### Changed
+- Also log message body on YNAB token refresh errors.
 
 ## 1.5.1 - 2024-03-23
 ### Changed

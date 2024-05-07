@@ -68,7 +68,7 @@ module N2y
         @token_pair.access = res.access_token
         @token_pair.refresh = res.refresh_token
       else
-        raise "#{error_message}: #{response.body}"
+        raise "#{error_message}: #{response.status_code}: #{response.body}"
       end
     end
 
