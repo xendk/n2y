@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major releases significant
 changes).
 
-## 1.5.2 - Unreleased
+## 1.5.3 - Unreleased
+
+## 1.5.2 - 2024-08-09
 ### Changed
 - Also log message body on YNAB token refresh errors.
 - Send exceptions to Honeybadger instead of Sentry.
