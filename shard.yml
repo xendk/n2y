@@ -24,16 +24,15 @@ dependencies:
     branch: master
   multi_auth:
     github: msa7/multi_auth
-  raven:
-    github: Sija/raven.cr
   dotenv:
     github: drum445/dotenv
   habitat:
     github: luckyframework/habitat
+  honeybadger:
+    github: honeybadger-io/honeybadger-crystal
 
 development_dependencies:
   webmock:
     github: manastech/webmock.cr
-    branch: master
   timecop:
     github: crystal-community/timecop.cr

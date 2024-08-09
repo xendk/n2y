@@ -6,8 +6,7 @@ Dotenv.load
 require "kemal"
 require "file_utils"
 require "multi_auth"
-require "raven"
-require "raven/integrations/kemal"
+require "honeybadger"
 require "log"
 require "http/cookie"
 require "./n2y"
@@ -58,29 +57,20 @@ N2y::YNAB.configure do |settings|
   settings.secret = ENV["YNAB_SECRET"]? || raise "YNAB_SECRET not set"
 end
 
-Raven.configure do |config|
-  # Keep main fiber responsive by sending the events in the background.
-  config.async = true
-  # Set the environment name using `Kemal.config.env`, which uses `KEMAL_ENV` variable under-the-hood.
-  config.current_environment = Kemal.config.env
-  # Use tags as release name.
-  config.release = Raven.sys_command_compiled("git describe --tags --always HEAD")
+Honeybadger.configure do |config|
+  # We'd like to use a tag, if available.
+  config.revision = {{ `git describe --tags --always HEAD`.chomp.stringify }}
+  # Set the environment name using `Kemal.config.env`, which uses
+  # `KEMAL_ENV` variable under-the-hood.
+  config.environment = Kemal.config.env
 end
 
 def log_exception(ex)
-  Kemal.config.env == "production" ? Raven.capture(ex) : log("Exception: #{ex.inspect_with_backtrace}")
+  Kemal.config.env == "production" ? Honeybadger.notify(ex) : log("Exception: #{ex.inspect_with_backtrace}")
 end
 
-# Capture logs to Sentry.
-if Kemal.config.env == "development"
-  # ... but log to STDOUT too in development.
-  Kemal.config.logger = Raven::Kemal::LogHandler.new(Kemal::LogHandler.new)
-else
-  Kemal.config.logger = Raven::Kemal::LogHandler.new
-end
-
-# Capture exceptions to Sentry.
-Kemal.config.add_handler Raven::Kemal::ExceptionHandler.new
+# Capture exceptions to Honeybadger.
+Kemal.config.add_handler Honeybadger::Handler.new
 
 FileUtils.mkdir_p ENV["SESSION_DIR"] if ENV["SESSION_DIR"]?
 
