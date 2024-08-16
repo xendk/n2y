@@ -8,6 +8,9 @@ bug fixes, minor releases new features, major releases significant
 changes).
 
 ## 1.5.3 - Unreleased
+### Changed
+- Limit sync interval to minimum 6 hours. Nordigen will be rate
+  limiting to 4 request per account every 24 hours soon.
 
 ## 1.5.2 - 2024-08-09
 ### Changed
