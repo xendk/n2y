@@ -24,7 +24,7 @@ begin
   end
 
   if version.nil?
-    raise "Could not next version in CHANGELOG.md"
+    raise "Could not find next version in CHANGELOG.md"
   end
 
   puts version
