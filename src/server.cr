@@ -122,9 +122,9 @@ spawn do
     N2y::User.all.each do |user|
       if user.sync_interval.positive? && user.last_sync_time + Time::Span.new(seconds: user.sync_interval) < Time.utc
         spawn do
+          runtime = Time.utc
           begin
             N2y::User::Log.context.set user_id: user.mail
-            runtime = Time.utc
             worker = N2y::Worker.new user
             worker.run
 
@@ -136,6 +136,10 @@ spawn do
               user.save
               N2y::User::Log.error { "EUA expired, disabling automatic sync" }
             end
+          rescue ex : N2y::Nordigen::RatelimitHitError
+            user.last_sync_time = runtime
+            user.save
+            N2y::User::Log.error { "Rate limit hit, will retry on next run" }
           rescue ex
             log_exception(ex, user)
           end

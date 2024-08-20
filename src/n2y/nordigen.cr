@@ -159,7 +159,7 @@ module N2y
         raise (DENIED_MAPPING[uri.path]? || InvalidAccessToken).new if response.status_code == 401
         raise "IP blacklisted" if response.status_code == 403
         raise SuspendedError.new if response.status_code == 409
-        raise "Ratelimit hit" if response.status_code == 429
+        raise RatelimitHitError.new if response.status_code == 429
         raise "Got redirect to #{response.headers["Location"]} on #{uri.path}" if response.status_code == 301
         raise ConnectionError.new if response.status_code == 503
         raise "Unexpected response #{response.status_code} code \"#{response.status_message}\", body: #{response.body}"

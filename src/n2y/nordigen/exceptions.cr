@@ -40,5 +40,11 @@ module N2y
         super "Account or requisition was suspended"
       end
     end
+
+    class RatelimitHitError < Exception
+      def initialize
+        super "Ratelimit hit"
+      end
+    end
   end
 end

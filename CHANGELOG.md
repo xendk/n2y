@@ -8,6 +8,9 @@ bug fixes, minor releases new features, major releases significant
 changes).
 
 ## 1.6.1 - Unreleased
+### Fixed
+- Don't retry every five minutes when hitting rate limit, but postpone
+  to next scheduled run.
 
 ## 1.6.0 - 2024-08-20
 ### Changed
