@@ -12,7 +12,6 @@ module N2y
 
     def run
       result = [] of String
-      runtime = Time.utc
 
       raise "Cannot run on non-existent user" unless @user.exists?
 
@@ -55,14 +54,6 @@ module N2y
         result << message
         User::Log.info { message }
 
-        @user.last_sync_time = runtime
-        @user.save
-      rescue ex : N2y::Nordigen::EUAExpiredError
-        if @user.sync_interval.positive?
-          @user.sync_interval = 0
-          @user.save
-          N2y::User::Log.error { "EUA expired, disabling automatic sync" }
-        end
       rescue ex : N2y::Nordigen::ConnectionError
         message = "Error communicating with bank, please try again later"
 

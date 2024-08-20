@@ -124,8 +124,18 @@ spawn do
         spawn do
           begin
             N2y::User::Log.context.set user_id: user.mail
+            runtime = Time.utc
             worker = N2y::Worker.new user
             worker.run
+
+            user.last_sync_time = runtime
+            user.save
+          rescue ex : N2y::Nordigen::EUAExpiredError
+            if user.sync_interval.positive?
+              user.sync_interval = 0
+              user.save
+              N2y::User::Log.error { "EUA expired, disabling automatic sync" }
+            end
           rescue ex
             log_exception(ex, user)
           end
