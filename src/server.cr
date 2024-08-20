@@ -65,8 +65,15 @@ Honeybadger.configure do |config|
   config.environment = Kemal.config.env
 end
 
-def log_exception(ex)
-  Kemal.config.env == "production" ? Honeybadger.notify(ex) : log("Exception: #{ex.inspect_with_backtrace}")
+def log_exception(ex, user : N2y::User? = nil)
+  context = {} of String => String
+  if user
+    context = {
+      "user_id" => user.mail,
+      "user_email" => user.mail
+    }
+  end
+  Kemal.config.env == "production" ? Honeybadger.notify(ex, context) : log("Exception: #{ex.inspect_with_backtrace}")
 end
 
 # Capture exceptions to Honeybadger.
@@ -120,7 +127,7 @@ spawn do
             worker = N2y::Worker.new user
             worker.run
           rescue ex
-            log_exception(ex)
+            log_exception(ex, user)
           end
         end
       end

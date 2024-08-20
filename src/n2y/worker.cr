@@ -34,7 +34,7 @@ module N2y
                 message = "Failed to map transaction #{transaction.dig?("transactionId") || "<unknown>"} with error #{ex.message}"
                 result << message
                 N2y::User::Log.error { message }
-                log_exception(ex)
+                log_exception(ex, @user)
               end
             end
           rescue ex : N2y::Bank::UnknownAccount
@@ -72,7 +72,7 @@ module N2y
         message = "Failed to sync transactions: #{ex.message}"
         result << message
         N2y::User::Log.error { message }
-        log_exception(ex)
+        log_exception(ex, @user)
       end
 
       result
