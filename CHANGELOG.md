@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major releases significant
 changes).
 
-## 1.6.0 - Unreleased
+## 1.6.1 - Unreleased
+
+## 1.6.0 - 2024-08-20
 ### Changed
 - Limit sync interval to minimum 6 hours. Nordigen will be rate
   limiting to 4 request per account every 24 hours soon.
