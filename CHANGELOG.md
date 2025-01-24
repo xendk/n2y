@@ -11,6 +11,9 @@ changes).
 ### Fixed
 - Don't retry every five minutes when hitting rate limit, but postpone
   to next scheduled run.
+- Use BigDecimal for amount calculation. Floating point errors is
+  possible even in the simple "multiply decimal amount from bank with
+  1000" calculation we do.
 
 ## 1.6.0 - 2024-08-20
 ### Changed

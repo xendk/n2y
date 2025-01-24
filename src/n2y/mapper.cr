@@ -1,4 +1,5 @@
 require "./ynab/transaction"
+require "big"
 require "digest/sha1"
 
 module N2y
@@ -18,7 +19,7 @@ module N2y
       raise "No additionalInformation nor remittanceInformationUnstructured in transaction" unless payee_name
 
       # Nordigen seems to return the amount as a string.
-      amount = data.dig?("transactionAmount", "amount").try { |x| (x.as_s.to_f * 1000).to_i }
+      amount = data.dig?("transactionAmount", "amount").try { |x| (x.as_s.to_big_d * 1000).to_i }
       raise "No amount in transaction" unless amount
       # raise "Transaction in future" if
 
