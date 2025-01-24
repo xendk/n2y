@@ -7,7 +7,9 @@ Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
 bug fixes, minor releases new features, major releases significant
 changes).
 
-## 1.6.1 - Unreleased
+## 1.6.2 - Unreleased
+
+## 1.6.1 - 2025-01-24
 ### Fixed
 - Don't retry every five minutes when hitting rate limit, but postpone
   to next scheduled run.
