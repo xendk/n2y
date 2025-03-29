@@ -8,6 +8,9 @@ bug fixes, minor releases new features, major releases significant
 changes).
 
 ## 1.6.2 - Unreleased
+### Chonged
+- Use the logging system when capturing messages for manual runs
+  rather than have the worker duplicate the messages.
 
 ## 1.6.1 - 2025-01-24
 ### Fixed

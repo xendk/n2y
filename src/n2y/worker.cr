@@ -11,8 +11,6 @@ module N2y
     end
 
     def run
-      result = [] of String
-
       raise "Cannot run on non-existent user" unless @user.exists?
 
       begin
@@ -30,43 +28,28 @@ module N2y
               begin
                 ynab_transactions << N2y::Mapper.map(transaction, account_id, @user.id_seed)
               rescue ex
-                message = "Failed to map transaction #{transaction.dig?("transactionId") || "<unknown>"} with error #{ex.message}"
-                result << message
-                N2y::User::Log.error { message }
+                N2y::User::Log.error { "Failed to map transaction #{transaction.dig?("transactionId") || "<unknown>"} with error #{ex.message}" }
                 log_exception(ex, @user)
               end
             end
           rescue ex : N2y::Bank::UnknownAccount
-            message = "Unknown account #{iban}, skipping"
-
-            result << message
-            N2y::User::Log.error { message }
+            N2y::User::Log.error { "Unknown account #{iban}, skipping" }
           end
         end
 
         if ynab_transactions.size > 0
           duplicates = budget.push_transactions(ynab_transactions)
-          message = "Synced #{ynab_transactions.size} transactions, #{duplicates} already existed"
+          User::Log.info { "Synced #{ynab_transactions.size} transactions, #{duplicates} already existed" }
         else
-          message = "No new transactions to sync"
+          User::Log.info { "No new transactions to sync" }
         end
 
-        result << message
-        User::Log.info { message }
-
       rescue ex : N2y::Nordigen::ConnectionError
-        message = "Error communicating with bank, please try again later"
-
-        result << message
-        N2y::User::Log.error { message }
+        N2y::User::Log.error { "Error communicating with bank, please try again later" }
       rescue ex
-        message = "Failed to sync transactions: #{ex.message}"
-        result << message
-        N2y::User::Log.error { message }
+        N2y::User::Log.error { "Failed to sync transactions: #{ex.message}" }
         log_exception(ex, @user)
       end
-
-      result
     end
   end
 end

@@ -116,7 +116,11 @@ module N2y
     get "/sync" do |env|
       user = (env.get "user").as(N2y::User)
       worker = N2y::Worker.new user
-      worker.run.join("<br/>")
+      log = N2y::CapturingBackend.capture do
+        worker.run
+      end
+
+      log.join("<br/>")
     end
 
     get "/privacy-policy" do |env|

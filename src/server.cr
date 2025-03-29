@@ -16,6 +16,7 @@ require "./n2y/user"
 require "./n2y/bank"
 require "./n2y/budget"
 require "./n2y/rotating_backend"
+require "./n2y/capturing_backend"
 require "./n2y/app"
 
 raise "Please set GOOGLE_CLIENT_ID" unless ENV["GOOGLE_CLIENT_ID"]?
@@ -45,6 +46,7 @@ Log.setup do |c|
     c.bind "*", :trace, Log::IOBackend.new(STDOUT)
   end
   c.bind "n2y.user", :debug, N2y::RotatingBackend.new
+  c.bind "n2y.user", :debug, N2y::CapturingBackend::INSTANCE
 end
 
 N2y::Nordigen.configure do |settings|
