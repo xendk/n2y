@@ -2,10 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-and this project loosely adheres to [Semantic
-Versioning](http://semver.org/spec/v2.0.0.html) (patch releases are
-bug fixes, minor releases new features, major releases significant
-changes).
+and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.dev/effver/).
 
 ## 1.6.2 - Unreleased
 ### Chonged
