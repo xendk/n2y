@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.dev/effver/).
 
-## 1.6.2 - Unreleased
+## 1.6.3 - Unreleased
+
+## 1.6.2 - 2025-03-29
 ### Chonged
 - Use the logging system when capturing messages for manual runs
   rather than have the worker duplicate the messages.
