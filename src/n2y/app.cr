@@ -117,7 +117,13 @@ module N2y
       user = (env.get "user").as(N2y::User)
       worker = N2y::Worker.new user
       log = N2y::CapturingBackend.capture do
-        worker.run
+        begin
+          worker.run
+        rescue ex : N2y::Nordigen::EUAExpiredError
+          N2y::User::Log.error { "EUA expired, please reconnect bank" }
+        rescue ex : N2y::Nordigen::RatelimitHitError
+          N2y::User::Log.error { "Rate limit hit, please try again later" }
+        end
       end
 
       log.join("<br/>")

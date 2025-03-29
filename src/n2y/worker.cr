@@ -46,6 +46,11 @@ module N2y
 
       rescue ex : N2y::Nordigen::ConnectionError
         N2y::User::Log.error { "Error communicating with bank, please try again later" }
+      # The caller will need to log these.
+      rescue ex : N2y::Nordigen::EUAExpiredError
+        raise ex
+      rescue ex : N2y::Nordigen::RatelimitHitError
+        raise ex
       rescue ex
         N2y::User::Log.error { "Failed to sync transactions: #{ex.message}" }
         log_exception(ex, @user)

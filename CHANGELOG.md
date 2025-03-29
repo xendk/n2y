@@ -12,6 +12,10 @@ changes).
 - Use the logging system when capturing messages for manual runs
   rather than have the worker duplicate the messages.
 
+### Fixed
+- Handling EUA expired and rate limit errors so they don't show up in
+  Honeybadger.
+
 ## 1.6.1 - 2025-01-24
 ### Fixed
 - Don't retry every five minutes when hitting rate limit, but postpone
