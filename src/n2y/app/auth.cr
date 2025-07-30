@@ -110,6 +110,12 @@ module N2y::App::Auth
 
     mail : String?
 
+    # Seems that some bots hits this page without a code.
+    unless env.params.query["code"]?
+      env.redirect "/auth/error"
+      next
+    end
+
     begin
       user = MultiAuth.make("google", redirect_uri).user(env.params.query)
       mail = user.email

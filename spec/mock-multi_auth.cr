@@ -46,7 +46,7 @@ end
 def authenticate(email)
   MultiAuth.email = email
   # Auth endpoints needs the host header to construct the callback url.
-  get "/auth/callback", HTTP::Headers{"Host" => "localhost"}
+  get "/auth/callback?code=123", HTTP::Headers{"Host" => "localhost"}
 
   response.status_code.should eq 302
 

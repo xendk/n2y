@@ -9,6 +9,8 @@ and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.
 ### Fixed
 - Specs, a bit embarrassing that they must have been broken since
   1.6.0.
+- Handle bots hitting /auth/callback without the code argument, so
+  they don't end up in Honeybadger.
 
 ## 1.6.2 - 2025-03-29
 ### Chonged
