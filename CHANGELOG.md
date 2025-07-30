@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.dev/effver/).
 
-## 1.6.3 - Unreleased
+## 1.6.4 - Unreleased
+
+## 1.6.3 - 2025-07-30
 
 ### Fixed
 - Specs, a bit embarrassing that they must have been broken since
