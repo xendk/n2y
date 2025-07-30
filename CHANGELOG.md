@@ -6,6 +6,10 @@ and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.
 
 ## 1.6.3 - Unreleased
 
+### Fixed
+- Specs, a bit embarrassing that they must have been broken since
+  1.6.0.
+
 ## 1.6.2 - 2025-03-29
 ### Chonged
 - Use the logging system when capturing messages for manual runs

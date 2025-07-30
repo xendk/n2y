@@ -23,6 +23,6 @@ end
 Kemal.config.port = 3001
 
 # This is defined by server.cr, so make it available.
-def log_exception(ex)
+def log_exception(ex, user : N2y::User? = nil)
   raise ex
 end
