@@ -6,6 +6,10 @@ and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.
 
 ## 1.6.4 - Unreleased
 
+### Changed
+- Update readme and privacy-policy to reflect that we switched to
+  Honeybadger.
+
 ## 1.6.3 - 2025-07-30
 
 ### Fixed

@@ -50,8 +50,8 @@ application. As for Google, `auth/ynab/callback` should be added to
 Redirect URI(s), and the client_id/secret should be added to the
 `.env` file.
 
-You can also add a `SENTRY_DSN` to the `.env` file to track errors in
-[Sentry.io](https://sentry.io)
+You can also add `HONEYBADGER_API_KEY` to the `.env` file to track errors in
+[Honeybadger.io](https://www.honeybadger.io/)
 
 Finally, run the server:
 
