@@ -5,35 +5,40 @@
 
 module N2y
   class YNAB
-    class YNABObject
+    # YNAB data transfer objects.
+    #
+    # YNAB DTOs subclasses are defined within this class namespace.
+    # This brings them in scope for any class subclassing the DTO
+    # class.
+    class DTO
       include JSON::Serializable
 
-      class Error < YNABObject
+      class Error < DTO
         getter name : String
         getter detail : String
       end
 
-      class BudgetData < YNABObject
+      class BudgetData < DTO
         getter budgets : Array(Budget)
       end
 
-      class Budget < YNABObject
+      class Budget < DTO
         getter id : String
         getter name : String
         getter accounts : Array(Account)
       end
 
-      class Account < YNABObject
+      class Account < DTO
         getter id : String
         getter name : String
       end
+
+      class TransactionsData < DTO
+        getter duplicate_import_ids : Array(String)
+      end
     end
 
-    class TransactionsData < YNABObject
-      getter duplicate_import_ids : Array(String)
-    end
-
-    class Response < YNABObject
+    class Response < DTO
     end
 
     class AuthorizeResponse < Response
