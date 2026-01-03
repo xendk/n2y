@@ -10,6 +10,11 @@ and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.
 - Update readme and privacy-policy to reflect that we switched to
   Honeybadger.
 
+### Fixed
+- In the background task runner, sleep for five minutes per run,
+  rather after spawning each user process. Avoids busy-loop if there's
+  no users.
+
 ## 1.6.3 - 2025-07-30
 
 ### Fixed

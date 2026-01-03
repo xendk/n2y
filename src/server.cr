@@ -148,8 +148,9 @@ spawn do
         end
       end
 
-      sleep 5.minutes
     end
+
+    sleep 5.minutes
   end
 end
 
