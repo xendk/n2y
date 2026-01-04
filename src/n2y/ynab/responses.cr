@@ -31,6 +31,7 @@ module N2y
       class Account < DTO
         getter id : String
         getter name : String
+        getter deleted : Bool
       end
 
       class TransactionsData < DTO

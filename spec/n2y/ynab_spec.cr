@@ -62,7 +62,7 @@ describe YNAB do
   it "gets accounts" do
     WebMock.stub(:get, "https://api.ynab.com/v1/budgets?include_accounts=true")
       .with(headers: expected_headers)
-      .to_return(body: "{\"data\":{\"budgets\":[{\"id\":\"1\",\"name\":\"Budget 1\",\"accounts\":[{\"id\":\"12\",\"name\":\"Checking\"},{\"id\":\"22\",\"name\":\"Savings\"}]},{\"id\":\"2\",\"name\":\"Budget 2\",\"accounts\":[{\"id\":\"21\",\"name\":\"Cayman\"}]}]}}")
+      .to_return(body: "{\"data\":{\"budgets\":[{\"id\":\"1\",\"name\":\"Budget 1\",\"accounts\":[{\"id\":\"12\",\"name\":\"Checking\", \"deleted\": false},{\"id\":\"22\",\"name\":\"Savings\", \"deleted\": false}]},{\"id\":\"2\",\"name\":\"Budget 2\",\"accounts\":[{\"id\":\"21\",\"name\":\"Cayman\", \"deleted\": false},{\"id\":\"22\",\"name\":\"Swiss\", \"deleted\": true}]}]}}")
 
     token_pair = TokenPair.new(access: "access_token", refresh: "refresh_token")
     ynab = YNAB.new(token_pair)

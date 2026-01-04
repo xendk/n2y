@@ -77,7 +77,7 @@ module N2y
       accounts = [] of Account
       res.data.budgets.each do |budget|
         budget.accounts.each do |account|
-          accounts << Account.new(account.id, account.name, budget.id, budget.name)
+          accounts << Account.new(account.id, account.name, budget.id, budget.name) unless account.deleted
         end
       end
 

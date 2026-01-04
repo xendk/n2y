@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.dev/effver/).
 
-## 1.6.4 - Unreleased
+## 1.7.0 - Unreleased
 
 ### Changed
 - Update readme and privacy-policy to reflect that we switched to
   Honeybadger.
+- Ignore deleted YNAB accounts.
 
 ### Fixed
 - In the background task runner, sleep for five minutes per run,
