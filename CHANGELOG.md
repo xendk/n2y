@@ -6,6 +6,10 @@ and this project adheres to [Intended Effort Versioning](https://jacobtomlinson.
 
 ## 1.7.1 - Unreleased
 
+### Fixed
+- Assume HTTPS in production. We're running a reverse proxy that
+  ensures HTTPS.
+
 ## 1.7.0 - 2026-01-04
 
 ### Changed

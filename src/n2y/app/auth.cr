@@ -15,6 +15,8 @@ module N2y::App::Auth
     "/auth/tos",
   ]
 
+  scheme = Kemal.config.env == "production" ? "https" : Kemal.config.scheme
+
   # Kemal middleware for authentication.
   #
   # Redirects to login page if user is not authenticated, and sets up
@@ -97,7 +99,7 @@ module N2y::App::Auth
   # Start authentication by redirecting to Google.
   get "/auth" do |env|
     title = "About"
-    redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/callback"
+    redirect_uri = "#{scheme}://#{env.request.headers["Host"]}/auth/callback"
 
     redirect_uri = MultiAuth.make("google", redirect_uri).authorize_uri
 
@@ -106,7 +108,7 @@ module N2y::App::Auth
 
   # Return callback.
   get "/auth/callback" do |env|
-    redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/callback"
+    redirect_uri = "#{scheme}://#{env.request.headers["Host"]}/auth/callback"
 
     mail : String?
 
@@ -176,7 +178,7 @@ module N2y::App::Auth
   # Start authentication with Nordigen with selected bank.
   get "/auth/nordigen/:bank_id" do |env|
     bank_id = env.params.url["bank_id"].as(String)
-    redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/nordigen/callback"
+    redirect_uri = "#{scheme}://#{env.request.headers["Host"]}/auth/nordigen/callback"
 
     user = (env.get "user").as(N2y::User)
     # Generate reference from mail and current time in miliseconds.
@@ -218,7 +220,7 @@ module N2y::App::Auth
 
   # Redirect to YNAB for authentication.
   get "/auth/ynab" do |env|
-    redirect_uri = "#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"
+    redirect_uri = "#{scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"
 
     user = (env.get "user").as(N2y::User)
 
@@ -231,7 +233,7 @@ module N2y::App::Auth
 
     user = (env.get "user").as(N2y::User)
 
-    N2y::YNAB.new(user.ynab_token_pair).authorize(code, URI.parse("#{Kemal.config.scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"))
+    N2y::YNAB.new(user.ynab_token_pair).authorize(code, URI.parse("#{scheme}://#{env.request.headers["Host"]}/auth/ynab/callback"))
     N2y::User::Log.info { "Authenticated with YNAB" }
 
     env.redirect "/"
